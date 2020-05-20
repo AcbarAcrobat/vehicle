@@ -1,0 +1,10 @@
+.pytest_cache/
+.vscode/
+**/__pycache__/
+__pycache__/
+.python-version
+allure_dir/
+**/.idea/
+**/.pytest_cache/
+**/venv
+**/entity/__pycache__/
