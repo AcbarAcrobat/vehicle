@@ -7,7 +7,7 @@ user_logs_fk_properties = {
     'entity': { 'type': 'string' },
     'result': { 'type': 'array' },
     'event_id': { 'type': 'integer' },
-    'intention': { 'type': 'object' },
+    'intention': any_of_types('object', 'array'),
     'id': { 'type': 'integer' }
 }
 
