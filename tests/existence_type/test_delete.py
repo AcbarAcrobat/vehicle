@@ -1,7 +1,7 @@
 import pytest
 import allure
 from helper import LOGGER
-from endpoint import CameraAvailability
+from endpoint import ExistenceType
 from truth.truth import AssertThat
 
 
@@ -10,10 +10,7 @@ class TestDelete:
     @allure.title("Удаление одного экземляра сущности")
     def test_delete_one(self, faker, endpoint):
         body = {
-            "values": {
-                "name": faker.uuid4(),
-                "description": faker.uuid4()
-            }
+            "values": {"name": faker.uuid4()}
         }
 
         id_ = endpoint.add(json=body).json()['result']
@@ -26,13 +23,14 @@ class TestDelete:
         resp = endpoint.get_by_id(id_).json()['result']
         AssertThat(resp).IsEmpty()
 
+
     @allure.title("Множественное удаление экземляров сущности")
     def test_delete_many(self, faker, endpoint):
         body = {
             "values": [
-                {"name": faker.uuid4(), "description": faker.uuid4()},
-                {"name": faker.uuid4(), "description": faker.uuid4()},
-                {"name": faker.uuid4(), "description": faker.uuid4()}
+                {"name": faker.uuid4()},
+                {"name": faker.uuid4()},
+                {"name": faker.uuid4()}
             ]
         }
 
