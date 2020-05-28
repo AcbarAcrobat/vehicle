@@ -64,7 +64,7 @@ class BaseEndpoint(object):
 
     @auth_before
     def get_random(self, **kwargs):
-        c = self.count().json()['result']
+        c = self.count()
         offset = random.randint(0, c-1)
         return self.get(json={"limit": 1, "offset": offset}).json()['result'][0]
 
