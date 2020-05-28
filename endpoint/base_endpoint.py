@@ -124,7 +124,7 @@ class BaseEndpoint(object):
     @auth_before
     def count(self, **kwargs):
         s = self.session
-        return s.post(self.url + 'count', **kwargs)
+        return s.post(self.url + 'count', **kwargs).json()['result']
 
 
     @auth_before
