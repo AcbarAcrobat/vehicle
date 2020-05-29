@@ -190,9 +190,9 @@ def data_vehicle(session, faker, data_mobile_operator, data_vehicle_type, data_e
 @pytest.fixture(scope='session')
 def data_vehicle_to_stage(session, faker, data_vehicle):
     body = {"values": []}
-    for _ in range(5):
+    for i in range(5):
         body["values"].append({
-            "vehicle_id": data_vehicle["ids"][0],
+            "vehicle_id": data_vehicle["ids"][i],
             "stage_id": VehicleToStage(session).get_last()["stage_id"]+1
         })
     r = VehicleToStage(session).add(json=body)
