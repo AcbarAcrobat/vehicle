@@ -8,7 +8,7 @@ def endpoint(session):
     yield Vehicle(session)
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='class')
 def body(faker):
     yield {
         "values": [
@@ -18,7 +18,7 @@ def body(faker):
     ]}
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='class')
 def new_entity(endpoint, body):
     ids = endpoint.add(json=body).json()['result']
     LOGGER.info(f"New ids: {ids}")

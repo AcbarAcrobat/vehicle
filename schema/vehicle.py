@@ -92,6 +92,11 @@ contract_bindings_fk_properties = {
     }
 }
 
+stages_fk_properties = {
+    "vehicle_id": {"type": "integer"},
+    "stage_id": {"type": "integer"}
+}
+
 vehicle_struct_properties = {
     ** vehicle_fk_properties,
     "error": {
@@ -130,7 +135,11 @@ vehicle_struct_properties = {
             }
         ]
     },
-    "parts": {"type": "array"}
+    "parts": {"type": "array"},
+    "stages": {
+        'type': 'array',
+        'items': build(stages_fk_properties)
+    }
 }
 
 
