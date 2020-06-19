@@ -115,23 +115,26 @@ class TestGet:
         validate(r.json(), vehicle.structural_schema(['error']))
 
     @allure.title("Получение списка экземляров сущности по условию")
-    def test_filter_by_attribute(self, endpoint, new_entity, body):
+    def test_filter_by_attribute(self, endpoint, data_vehicle):
+        id_ = data_vehicle["ids"][0]
         body = {
-            "filter_by": [{"attribute": "id", "operator": ">=", "value": new_entity[0]}]
+            "filter_by": [{"attribute": "id", "operator": ">=", "value": id_}]
         }
         r = endpoint.get(json=body)
 
         resp = r.json()['result']
         ids = [r['id'] for r in resp]
 
-        [AssertThat(i).IsAtLeast(new_entity[0]) for i in ids]
+        [AssertThat(i).IsAtLeast(id_) for i in ids]
 
     @allure.title("Получение списка экземляров сущности по условию 'И'")
-    def test_filter_by_multiple_attributes(self, endpoint, new_entity, body):
+    def test_filter_by_multiple_attributes(self, endpoint, data_vehicle):
+        id_ = data_vehicle["ids"][0]
+        login = data_vehicle["body"]["values"][0]["login"]
         body = {
             "filter_by": [
-                {"attribute": "id", "operator": ">=", "value": new_entity[0]},
-                {"attribute": "login", "operator": "=", "value": "ZXC"}
+                {"attribute": "id", "operator": ">=", "value": id_},
+                {"attribute": "login", "operator": "=", "value": login}
             ]
         }
         r = endpoint.get(json=body)
@@ -139,8 +142,8 @@ class TestGet:
         resp = r.json()['result']
 
         for data in resp:
-            AssertThat(data['id']).IsAtLeast(new_entity[0])
-            AssertThat(data['login']).IsEqualTo("ZXC")
+            AssertThat(data['id']).IsAtLeast(id_)
+            AssertThat(data['login']).IsEqualTo(login)
 
     @allure.title("Получение списка экземляров сущности по условию дочерней сущности")
     def test_filter_by_child_attribute(self, session, endpoint):
@@ -171,11 +174,13 @@ class TestGet:
         [AssertThat(i % 2).IsEqualTo(0) for i in ids]
 
     @allure.title("Получение списка экземляров сущности по условию 'ИЛИ'")
-    def test_search_by(self, endpoint, new_entity):
+    def test_search_by(self, endpoint, data_vehicle):
+        id_ = data_vehicle["ids"][0]
+        login = data_vehicle["body"]["values"][0]["login"]
         body = {
             "search_by": [
-                {"attribute": "id", "operator": ">=", "value": new_entity[0]},
-                {"attribute": "login", "operator": "=", "value": "ZXC"}
+                {"attribute": "id", "operator": ">=", "value": id_},
+                {"attribute": "login", "operator": "=", "value": login}
             ]
         }
         r = endpoint.get(json=body)
@@ -183,10 +188,10 @@ class TestGet:
         resp = r.json()['result']
 
         for data in resp:
-            id_ = data['id']
-            login = data['login']
-            if id_ < new_entity[0] and login != "ZXC":
-                raise AssertionError(f'Not true that {id_} >= {new_entity[0]} OR {login} == "ZXC"')
+            id__ = data['id']
+            login_ = data['login']
+            if id__ < id_ and login_ != login:
+                raise AssertionError(f'Not true that {id__} >= {id_]} OR {login_} == {login}')
 
     @allure.title(" Получение списка отсортированных по возрастанию экземляров сущности")
     def test_order_by(self, new_entity, endpoint):

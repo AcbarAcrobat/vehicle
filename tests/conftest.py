@@ -9,6 +9,9 @@ from xdist.scheduler.loadscope import LoadScopeScheduling
 from endpoint import *
 from datetime import datetime as dt
 
+def now_millis():
+    return round(dt.utcnow().timestamp()*1000)
+
 
 @pytest.fixture(scope='session')
 def token():
@@ -139,14 +142,14 @@ def data_vehicle_type(session, faker):
 @pytest.fixture(scope='session')
 def data_vehicle(session, faker, data_mobile_operator, data_vehicle_type, data_existence_type):
     body = {"values": []}
-    for _ in range(5):
+    for i in range(5):
         body["values"].append({
             "subscriber_identification_module_number": faker.uuid4(),
             "international_mobile_equipment_identity": faker.uuid4(),
             "vehicle_identification_number": faker.uuid4(),
             "computer_serial_number": faker.uuid4(),
             "is_stats_check_enabled": True,
-            "mobile_operator_id": data_mobile_operator["ids"][0],  # <<<
+            "mobile_operator_id": data_mobile_operator["ids"][i],
             "registration_plate": faker.uuid4(),
             # "contract_bindings": array_of("integer"),
             # "ownership_type_id": {"type": "integer"},
@@ -154,7 +157,7 @@ def data_vehicle(session, faker, data_mobile_operator, data_vehicle_type, data_e
             # "attached_files": array_of("integer"),
             "approving_date": round(dt.utcnow().timestamp()*1000),
             "chat_room_id": faker.random_number(),
-            "availability": data_existence_type["ids"][0],
+            "availability": data_existence_type["ids"][i],
             # "template_id": {"type": "integer"},
             # "contract_id": {"type": "integer"},
             "ip_address": "127.0.0.1",
@@ -164,7 +167,7 @@ def data_vehicle(session, faker, data_mobile_operator, data_vehicle_type, data_e
             "password": faker.uuid4(),
             "axxon_id": faker.uuid4(),
             "latitude": 56.78,
-            "type_id": data_vehicle_type["ids"][0],  # <<<
+            "type_id": data_vehicle_type["ids"][i],
             # "status": {
             #     "anyOf": [
             #         array_of("integer"),
@@ -188,11 +191,25 @@ def data_vehicle(session, faker, data_mobile_operator, data_vehicle_type, data_e
 
 
 @pytest.fixture(scope='session')
+def data_vehicle_error(session, faker, data_vehicle):
+    body = {"values": []}
+    for i in range(5):
+        body["values"].append({
+            "code": faker.random_digit(),
+            "vehicle_id":data_vehicle["ids"][i],
+            "occurred_at": now_millis()
+        })
+    r = VehicleError(session).add(json=body)
+    LOGGER.info(f"VehicleError: {r.json()}")
+    yield {"body": body, "ids": r.json()['result']}
+
+
+@pytest.fixture(scope='session')
 def data_vehicle_to_stage(session, faker, data_vehicle):
     body = {"values": []}
-    for _ in range(5):
+    for i in range(5):
         body["values"].append({
-            "vehicle_id": data_vehicle["ids"][0],
+            "vehicle_id": data_vehicle["ids"][i],
             "stage_id": VehicleToStage(session).get_last()["stage_id"]+1
         })
     r = VehicleToStage(session).add(json=body)
@@ -203,9 +220,9 @@ def data_vehicle_to_stage(session, faker, data_vehicle):
 @pytest.fixture(scope='session')
 def data_vehicle_to_attached_file(session, faker, data_vehicle):
     body = {"values": []}
-    for _ in range(5):
+    for i in range(5):
         body["values"].append({
-            "vehicle_id": data_vehicle["ids"][0],
+            "vehicle_id": data_vehicle["ids"][i],
             "file_name": f"{faker.uuid4()}.pdf",
             "order_id": None,
             "file_id": faker.random_number()
@@ -232,10 +249,10 @@ def data_vehicle_part_type(session, faker):
 @pytest.fixture(scope='session')
 def data_vehicle_part(session, faker, data_vehicle, data_vehicle_part_type):
     body = {"values": []}
-    for _ in range(5):
+    for i in range(5):
         body["values"].append({
-            "vehicle_id": data_vehicle["ids"][0],
-            "part_type_id": data_vehicle_part_type["ids"][0]
+            "vehicle_id": data_vehicle["ids"][i],
+            "part_type_id": data_vehicle_part_type["ids"][i]
             # "cameras": array_of("integer")
         })
     r = VehiclePart(session).add(json=body)
@@ -246,11 +263,11 @@ def data_vehicle_part(session, faker, data_vehicle, data_vehicle_part_type):
 @pytest.fixture(scope='session')
 def data_vehicle_camera(session, faker, data_camera_availability, data_vehicle_part):
     body = {"values": []}
-    for _ in range(5):
+    for i in range(5):
         body["values"].append({
             "stream_resolution_height": faker.random_number(),
             "stream_resolution_width": faker.random_number(),
-            "camera_availability_id": data_camera_availability["ids"][0],
+            "camera_availability_id": data_camera_availability["ids"][i],
             "hls_second_stream_url": "http://localhost:80",
             "hls_first_stream_url": "http://localhost:80",
             "camera_position_id": 0,
@@ -266,26 +283,37 @@ def data_vehicle_camera(session, faker, data_camera_availability, data_vehicle_p
             "ip_address": "127.0.0.1",
             "stream_fps": faker.random_number(),
             "axxon_id": faker.uuid4(),
-            "part_id": data_vehicle_part["ids"][0],
-            # "status": {
-            #     "anyOf": [
-            #         array_of("integer"),
-            #         {"type": "null"}
-            #     ]
-            # },
+            "part_id": data_vehicle_part["ids"][i],
             "camera_position": {
                 "x": faker.random_digit(),
                 "y": faker.random_digit(),
                 "scope": faker.random_digit(),
                 "azimut": faker.random_digit()
             },
-            # "error": {
-            #     "anyOf": [
-            #         array_of("integer"),
-            #         {"type": "null"}
-            #     ]
-            # }
         })
     r = VehicleCamera(session).add(json=body)
     LOGGER.info(f"VehicleCamera: {r.json()}")
     yield {"body": body, "ids": r.json()['result']}
+
+
+@pytest.fixture(scope='session', autouse=True)
+def populate(
+    data_camera_availability,
+    data_existence_type,
+    data_mobile_operator,
+    data_vehicle_type,
+    data_vehicle,
+    data_vehicle_error,
+    data_vehicle_to_stage,
+    data_vehicle_to_attached_file,
+    data_vehicle_part_type,
+    data_vehicle_part,
+    data_vehicle_camera
+):
+    s = '''
+\t+-----------------+
+\t| END POPULATE DB |
+\t+-----------------+
+    '''
+    LOGGER.info(s)
+    yield

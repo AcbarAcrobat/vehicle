@@ -54,23 +54,26 @@ class TestGet:
         validate(r.json(), existence_type.foreign_key_schema())
 
     @allure.title("Получение списка экземляров сущности по условию")
-    def test_filter_by_attribute(self, endpoint):
+    def test_filter_by_attribute(self, endpoint, data_existence_type):
+        name = data_existence_type["body"]["values"][0]["name"]
         body = {
-            "filter_by": [{"attribute": "name", "operator": "=", "value": "PLANNED"}]
+            "filter_by": [{"attribute": "name", "operator": "=", "value": name}]
         }
         r = endpoint.get(json=body)
 
         resp = r.json()['result']
         names = [r['name'] for r in resp]
 
-        [AssertThat(i).IsEqualTo("PLANNED") for i in names]
+        [AssertThat(i).IsEqualTo(name) for i in names]
 
     @allure.title("Получение списка экземляров сущности по условию 'И'")
-    def test_filter_by_multiple_attributes(self, endpoint):
+    def test_filter_by_multiple_attributes(self, endpoint, data_existence_type):
+        name = data_existence_type["body"]["values"][0]["name"]
+        id_ = data_existence_type["ids"][0]
         body = {
             "filter_by": [
-                {"attribute": "name", "operator": "=", "value": "PLANNED"},
-                {"attribute": "id", "operator": "<=", "value": 5}
+                {"attribute": "name", "operator": "=", "value": name},
+                {"attribute": "id", "operator": ">=", "value": id_}
             ]
         }
         r = endpoint.get(json=body)
@@ -78,8 +81,8 @@ class TestGet:
         resp = r.json()['result']
 
         for data in resp:
-            AssertThat(data['id']).IsAtMost(5)
-            AssertThat(data['name']).IsEqualTo("PLANNED")
+            AssertThat(data['id']).IsAtLeast(id_)
+            AssertThat(data['name']).IsEqualTo(name)
 
     @allure.title("Получение списка экземляров сущности по условию, содержащему препроцессор")
     def test_filter_by_even_id(self, endpoint):
@@ -95,11 +98,13 @@ class TestGet:
         [AssertThat(i % 2).IsEqualTo(0) for i in ids]
 
     @allure.title("Получение списка экземляров сущности по условию 'ИЛИ'")
-    def test_search_by(self, endpoint):
+    def test_search_by(self, endpoint, data_existence_type):
+        name = data_existence_type["body"]["values"][0]["name"]
+        id_ = data_existence_type["ids"][0]
         body = {
             "search_by": [
-                {"attribute": "id", "operator": "<=", "value": 5},
-                {"attribute": "name", "operator": "=", "value": "QUX"}
+                {"attribute": "name", "operator": "=", "value": name},
+                {"attribute": "id", "operator": ">=", "value": id_}
             ]
         }
         r = endpoint.get(json=body)
@@ -107,10 +112,10 @@ class TestGet:
         resp = r.json()['result']
 
         for data in resp:
-            id_ = data['id']
-            name = data['name']
-            if id_ > 5 and name != "QUX":
-                raise AssertionError(f'Not true that {id_} <= 5 OR {name} == "QUX"')
+            id__ = data['id']
+            name_ = data['name']
+            if id__ < id_ and name_ != name:
+                raise AssertionError(f'Not true that {id__} >= {id_} OR {name_} == {name}')
 
     @allure.title(" Получение списка отсортированных по возрастанию экземляров сущности")
     def test_order_by(self, endpoint):

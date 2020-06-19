@@ -54,23 +54,26 @@ class TestGet:
         validate(r.json(), vehicle_error.foreign_key_schema())
 
     @allure.title("Получение списка экземляров сущности по условию")
-    def test_filter_by_attribute(self, endpoint):
+    def test_filter_by_attribute(self, endpoint, data_vehicle_error):
+        code = data_vehicle_error["body"]["values"][0]["code"]
         body = {
-            "filter_by": [{"attribute": "code", "operator": "<=", "value": 10}]
+            "filter_by": [{"attribute": "code", "operator": "=", "value": code}]
         }
         r = endpoint.get(json=body)
 
         resp = r.json()['result']
         codes = [r['code'] for r in resp]
 
-        [AssertThat(i).IsAtMost(10) for i in codes]
+        [AssertThat(i).IsEqualTo(code) for i in codes]
 
     @allure.title("Получение списка экземляров сущности по условию 'И'")
-    def test_filter_by_multiple_attributes(self, endpoint):
+    def test_filter_by_multiple_attributes(self, endpoint, data_vehicle_error):
+        code = data_vehicle_error["body"]["values"][0]["code"]
+        vehicle_id = data_vehicle_error["body"]["values"][0]["vehicle_id"]
         body = {
             "filter_by": [
-                {"attribute": "vehicle_id", "operator": "<=", "value": 91000},
-                {"attribute": "code", "operator": "<=", "value": 10}
+                {"attribute": "vehicle_id", "operator": ">=", "value": vehicle_id},
+                {"attribute": "code", "operator": "=", "value": code}
             ]
         }
         r = endpoint.get(json=body)
@@ -78,8 +81,8 @@ class TestGet:
         resp = r.json()['result']
 
         for data in resp:
-            AssertThat(data['vehicle_id']).IsAtMost(91000)
-            AssertThat(data['code']).IsAtMost(10)
+            AssertThat(data['vehicle_id']).IsAtLeast(vehicle_id)
+            AssertThat(data['code']).IsEqualTo(code)
 
     @allure.title("Получение списка экземляров сущности по условию, содержащему препроцессор")
     def test_filter_by_even_id(self, endpoint):
@@ -95,11 +98,13 @@ class TestGet:
         [AssertThat(i % 2).IsEqualTo(0) for i in ids]
 
     @allure.title("Получение списка экземляров сущности по условию 'ИЛИ'")
-    def test_search_by(self, endpoint):
+    def test_search_by(self, endpoint, data_vehicle_error):
+        code = data_vehicle_error["body"]["values"][0]["code"]
+        vehicle_id = data_vehicle_error["body"]["values"][0]["vehicle_id"]
         body = {
             "search_by": [
-                {"attribute": "vehicle_id", "operator": "<=", "value": 91000},
-                {"attribute": "code", "operator": "<=", "value": 10}
+                {"attribute": "vehicle_id", "operator": ">=", "value": vehicle_id},
+                {"attribute": "code", "operator": "=", "value": code}
             ]
         }
         r = endpoint.get(json=body)
@@ -107,10 +112,10 @@ class TestGet:
         resp = r.json()['result']
 
         for data in resp:
-            vehicle_id = data['vehicle_id']
-            code = data['code']
-            if vehicle_id > 91000 and code > 10:
-                raise AssertionError(f'Not true that {vehicle_id} <= 91000 OR {code} <= 10')
+            vehicle_id_ = data['vehicle_id']
+            code_ = data['code']
+            if vehicle_id_ < vehicle_id and code != code:
+                raise AssertionError(f'Not true that {vehicle_id_} >= {vehicle_id} OR {code_} == {code}')
 
     @allure.title(" Получение списка отсортированных по возрастанию экземляров сущности")
     def test_order_by(self, endpoint):
