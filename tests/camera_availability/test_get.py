@@ -17,7 +17,6 @@ class TestGet:
         validate(r.json(), camera_availability.foreign_key_schema())
 
     @allure.title("Получение списка экземляров сущности с определенными атрибутами")
-    
     @pytest.mark.parametrize(
         'columns', [
             ([]),
@@ -34,7 +33,6 @@ class TestGet:
         validate(r.json(), camera_availability.foreign_key_schema(columns))
 
     @allure.title("По умолчанию сортировка по первичному ключу")
-    
     def test_default_sorting_by_id(self, session):
         r = CameraAvailability(session).get()
         resp = r.json()['result']
@@ -43,39 +41,38 @@ class TestGet:
         AssertThat(r.json()['result']).ContainsExactlyElementsIn(sorted_resp).InOrder()
 
     @allure.title("Получение списка экземляров сущности со всеми атрибутами без раскрытия атрибутов отношений")
-    
     def test_get_entity_with_all_attributes_without_relations(self, session):
         body = {'columns': ['*']}
         r = CameraAvailability(session).get(json=body)
         validate(r.json(), camera_availability.foreign_key_schema())
 
     @allure.title("Получение списка экземляров сущности с всеми атрибутами c раскрытием атрибутов отношений")
-    
     def test_get_entity_with_all_attributes_and_relations(self, session):
         body = {'columns': ['**']}
         r = CameraAvailability(session).get(json=body)
         validate(r.json(), camera_availability.foreign_key_schema())
 
     @allure.title("Получение списка экземляров сущности по условию")
-    
-    def test_filter_by_attribute(self, session):
+    def test_filter_by_attribute(self, session, data_camera_availability):
+        id_ = data_camera_availability["ids"][0]
         body = {
-            'filter_by': [{'attribute': 'id', 'operator': '<=', 'value': 3}]
+            'filter_by': [{'attribute': 'id', 'operator': '>=', 'value': id_}]
         }
         r = CameraAvailability(session).get(json=body)
 
         resp = r.json()['result']
         ids = [r['id'] for r in resp]
 
-        [AssertThat(i).IsAtMost(3) for i in ids]
+        [AssertThat(i).IsAtLeast(id_) for i in ids]
 
     @allure.title("Получение списка экземляров сущности по условию 'И'")
-    
-    def test_filter_by_multiple_attributes(self, session):
+    def test_filter_by_multiple_attributes(self, session, data_camera_availability):
+        id_ = data_camera_availability["ids"][0]
+        name = data_camera_availability["body"]["values"][0]["data_camera_availability"]
         body = {
             "filter_by": [
-                {"attribute": "id", "operator": "<=", "value": 3},
-                {"attribute": "name", "operator": "=", "value": "unknown"}
+                {'attribute': 'id', 'operator': '>=', 'value': id_},
+                {"attribute": "name", "operator": "=", "value": name}
             ]
         }
         r = CameraAvailability(session).get(json=body)
@@ -83,16 +80,17 @@ class TestGet:
         resp = r.json()['result']
 
         for data in resp:
-            AssertThat(data['id']).IsAtMost(3)
-            AssertThat(data['name']).IsEqualTo("unknown")
+            AssertThat(data['id']).IsAtLeast(id_)
+            AssertThat(data['name']).IsEqualTo(name)
 
     @allure.title("Получение списка экземляров сущности по условию 'ИЛИ'")
-    
-    def test_search_by(self, session):
+    def test_search_by(self, session, data_camera_availability):
+        id_ = data_camera_availability["ids"][0]
+        name = data_camera_availability["body"]["values"][0]["data_camera_availability"]
         body = {
             "search_by": [
-                {"attribute": "id", "operator": "<=", "value": 3},
-                {"attribute": "name", "operator": "=", "value": "unknown"}
+                {'attribute': 'id', 'operator': '>=', 'value': id_},
+                {"attribute": "name", "operator": "=", "value": name}
             ]
         }
         r = CameraAvailability(session).get(json=body)
@@ -100,14 +98,13 @@ class TestGet:
         resp = r.json()['result']
 
         for data in resp:
-            id_ = data['id']
-            name = data['name']
-            if id_ > 3 and name != 'unknown':
+            id__ = data['id']
+            name_ = data['name']
+            if id__ < id_ and name_ != name:
                 raise AssertionError(
-                    f'Not true that {id_} <= 3 OR {name} = "unknown"')
+                    f'Not true that {id__} >= {id_} OR {name_} == {name}')
 
     @allure.title(" Получение списка отсортированных по возрастанию экземляров сущности")
-    
     def test_order_by(self, session):
         body = {
             "columns": ["id"],
@@ -122,7 +119,6 @@ class TestGet:
         AssertThat(actual_ids).ContainsExactlyElementsIn(sorted_ids).InOrder()
 
     @allure.title("Получение списка отсортированных по убыванию экземляров сущности")
-    
     def test_order_by_descending(self, session):
         body = {
             "columns": ["id"],
@@ -137,7 +133,6 @@ class TestGet:
         AssertThat(actual_ids).ContainsExactlyElementsIn(sorted_ids).InOrder()
 
     @allure.title("Получение списка экземляров сущности со смещением")
-    
     def test_offset(self, session):
         body = {
             "columns": ["id"],
