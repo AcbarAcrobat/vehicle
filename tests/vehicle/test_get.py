@@ -191,7 +191,7 @@ class TestGet:
             id__ = data['id']
             login_ = data['login']
             if id__ < id_ and login_ != login:
-                raise AssertionError(f'Not true that {id__} >= {id_]} OR {login_} == {login}')
+                raise AssertionError(f'Not true that {id__} >= {id_} OR {login_} == {login}')
 
     @allure.title(" Получение списка отсортированных по возрастанию экземляров сущности")
     def test_order_by(self, new_entity, endpoint):
