@@ -3,4 +3,4 @@ from endpoint import BaseEndpoint
 
 class VehicleContractBinding(BaseEndpoint):
 
-    PATH = 'entity/vehicle_contract_binding/'
+    PATH = 'vehicle_api/entity/vehicle_contract_binding/'

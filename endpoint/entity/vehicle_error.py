@@ -3,4 +3,4 @@ from endpoint import BaseEndpoint
 
 class VehicleError(BaseEndpoint):
 
-    PATH = 'entity/vehicle_error/'
+    PATH = 'vehicle_api/entity/vehicle_error/'

@@ -3,4 +3,4 @@ from endpoint import BaseEndpoint
 
 class EventType(BaseEndpoint):
 
-    PATH = 'entity/event_type/'
+    PATH = 'vehicle_api/entity/event_type/'

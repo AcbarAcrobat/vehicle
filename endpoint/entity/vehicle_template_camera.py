@@ -3,4 +3,4 @@ from endpoint import BaseEndpoint
 
 class VehicleTemplateCamera(BaseEndpoint):
 
-    PATH = 'entity/vehicle_template_camera/'
+    PATH = 'vehicle_api/entity/vehicle_template_camera/'

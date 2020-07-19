@@ -3,4 +3,4 @@ from endpoint import BaseEndpoint
 
 class VehiclePartType(BaseEndpoint):
 
-    PATH = 'entity/vehicle_part_type/'
+    PATH = 'vehicle_api/entity/vehicle_part_type/'
