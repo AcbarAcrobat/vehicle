@@ -27,7 +27,7 @@ def token():
 
 
 @pytest.fixture(scope='session')
-def session(token):
+def session():
     s = sessions.BaseUrlSession(base_url=config['base_url'])
     s.headers = {
         'Content-Type': 'application/json',
@@ -99,7 +99,9 @@ def data_camera_availability(session, faker):
 
     r = CameraAvailability(session).add(json=body)
     LOGGER.info(f"CameraAvailability: {r.json()}")
-    yield {"body": body, "ids": r.json()['result']}
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    CameraAvailability(session).delete_many_by("id", ids)
 
 
 @pytest.fixture(scope='session')
@@ -111,7 +113,9 @@ def data_existence_type(session, faker):
         })
     r = ExistenceType(session).add(json=body)
     LOGGER.info(f"ExistenceType: {r.json()}")
-    yield {"body": body, "ids": r.json()['result']}
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    ExistenceType(session).delete_many_by("id", ids)
 
 
 @pytest.fixture(scope='session')
@@ -123,7 +127,9 @@ def data_mobile_operator(session, faker):
         })
     r = MobileOperator(session).add(json=body)
     LOGGER.info(f"MobileOperator: {r.json()}")
-    yield {"body": body, "ids": r.json()['result']}
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    MobileOperator(session).delete_many_by("id", ids)
 
 
 @pytest.fixture(scope='session')
@@ -136,11 +142,28 @@ def data_vehicle_type(session, faker):
         })
     r = VehicleType(session).add(json=body)
     LOGGER.info(f"VehicleType: {r.json()}")
-    yield {"body": body, "ids": r.json()['result']}
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    VehicleType(session).delete_many_by("id", ids)
 
 
 @pytest.fixture(scope='session')
-def data_vehicle(session, faker, data_mobile_operator, data_vehicle_type, data_existence_type):
+def data_vehicle_template(session, faker, data_vehicle_type):
+    body = {"values": []}
+    for i in range(5):
+        body["values"].append({
+            "title": faker.uuid4(),
+            "type_id ": data_vehicle_type["ids"][i]
+        })
+    r = VehicleTemplate(session).add(json=body)
+    LOGGER.info(f"VehicleTemplate: {r.json()}")
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    VehicleTemplate(session).delete_many_by("id", ids)
+
+
+@pytest.fixture(scope='session')
+def data_vehicle(session, faker, data_mobile_operator, data_vehicle_type, data_existence_type, data_vehicle_template):
     body = {"values": []}
     for i in range(5):
         body["values"].append({
@@ -158,7 +181,7 @@ def data_vehicle(session, faker, data_mobile_operator, data_vehicle_type, data_e
             "approving_date": round(dt.utcnow().timestamp()*1000),
             "chat_room_id": faker.random_number(),
             "availability": data_existence_type["ids"][i],
-            # "template_id": {"type": "integer"},
+            "template_id": data_vehicle_template["ids"][i],
             # "contract_id": {"type": "integer"},
             "ip_address": "127.0.0.1",
             "region_id": 1,
@@ -187,7 +210,9 @@ def data_vehicle(session, faker, data_mobile_operator, data_vehicle_type, data_e
         })
     r = Vehicle(session).add(json=body)
     LOGGER.info(f"Vehicle: {r.json()}")
-    yield {"body": body, "ids": r.json()['result']}
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    Vehicle(session).delete_many_by("id", ids)
 
 
 @pytest.fixture(scope='session')
@@ -201,21 +226,131 @@ def data_vehicle_error(session, faker, data_vehicle):
         })
     r = VehicleError(session).add(json=body)
     LOGGER.info(f"VehicleError: {r.json()}")
-    yield {"body": body, "ids": r.json()['result']}
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    VehicleError(session).delete_many_by("id", ids)
+
+
+####################################################################################
+####################################################################################
+####################################################################################
+@pytest.fixture(scope='session')
+def data_loaded_file(session, faker):
+    body = {"values": []}
+    for i in range(5):
+        body["values"].append({
+            "file_extension": ".json",
+            "storage_path": faker.bothify("##??"),
+            "storage_file_name": faker.uuid4(),
+            "file_size": faker.random_number(),
+            "uploaded_at": now_millis(),
+            "full_file_name": faker.uuid4(),
+            "sha512": faker.sha256()+faker.sha256(),
+            "md5": faker.md5()
+        })
+    r = LoadedFile(session).add(json=body)
+    LOGGER.info(f"LoadedFile: {r.json()}")
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    # LoadedFile(session).delete_many_by("id", ids)
 
 
 @pytest.fixture(scope='session')
-def data_vehicle_to_stage(session, faker, data_vehicle):
+def data_region(session, faker, data_loaded_file):
+    body = {"values": []}
+    for i in range(5):
+        body["values"].append({
+            "created_at_epoch": now_millis(),
+            "osm_id": data_loaded_file["ids"][i],
+            "title": faker.uuid4()
+        })
+    r = Region(session).add(json=body)
+    ids = r.json()['result']
+    LOGGER.info(f"Region: {r.json()}")
+    yield {"body": body, "ids": ids}
+    Region(session).delete_many_by("id", ids)
+
+
+
+@pytest.fixture(scope='session')
+def data_contract(session, faker, data_region):
+    body = {"values": []}
+    for i in range(5):
+        body["values"].append({
+            "violation_minutes_to_become_defective": abs(faker.pyfloat()),
+            "allowed_bitrate_deviation_percent": abs(faker.pyfloat()),
+            # https://git.abm-jsc.ru/saferegion/immovable_server/-/blob/master/source/entities/no_data_consideration_type.py#L19
+            "no_data_consideration_type_id": 1,
+            "data_gathering_type_id": 1,
+            "sane_minutes_to_become_valid": abs(faker.pyfloat()),
+            "report_representation_id": faker.random_number(),
+            "allowed_fps_deviation": abs(faker.pyfloat()),
+            "parent_contract_id": None,
+            "maintainer_phone": "88005553535",
+            "max_loss_percent": abs(faker.pyfloat()),
+            "maintainer_email": "hello@world.org",
+            "created_at_epoch": now_millis(),
+            # "network_devices": {'type': 'array'},
+            "maintainer_name": faker.name(),
+            # "attached_files": {'type': 'array'},
+            "enable_mailing": True,
+            "record_length": faker.random_number(),
+            # "restreamers": {'type': 'array'},
+            "description": faker.sentence(),
+            "max_jitter": abs(faker.pyfloat()),
+            "region_id": data_region["ids"][i],
+            "max_ping": abs(faker.pyfloat()),
+            # "schemas": {'type': 'array'},
+            # "cameras": array_of('integer'),
+            "email": "vasya@pupkin.net",
+            "title": faker.uuid4()
+        })
+    r = Contract(session).add(json=body)
+    LOGGER.info(f"Contract: {r.json()}")
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    Contract(session).delete_many_by("id", ids)
+
+
+@pytest.fixture(scope='session')
+def data_contract_stage(session, faker, data_contract):
+    body = {"values": []}
+    for i in range(5):
+        body["values"].append({
+            "created_at_epoch": now_millis(),
+            "start_at_epoch": now_millis(),
+            "end_at_epoch": now_millis(),
+            "contract_id": data_contract["ids"][i],
+            "title": faker.uuid4(),
+            "price": abs(faker.pyfloat())
+        })
+    r = ContractStage(session).add(json=body)
+    LOGGER.info(f"ContractStage: {r.json()}")
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    ContractStage(session).delete_many_by("id", ids)
+
+
+@pytest.fixture(scope='session')
+def data_vehicle_to_stage(session, faker, data_vehicle, data_contract_stage):
     body = {"values": []}
     for i in range(5):
         body["values"].append({
             "vehicle_id": data_vehicle["ids"][i],
-            "stage_id": VehicleToStage(session).get_last()["stage_id"]+1
+            "stage_id": data_contract_stage["ids"][i]
         })
     r = VehicleToStage(session).add(json=body)
     LOGGER.info(f"VehicleToStage: {r.json()}")
-    yield {"body": body, "ids": r.json()['result']}
-
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    for data in body["values"]:
+        VehicleToStage(session).delete_by([
+            ("vehicle_id", data["vehicle_id"]),
+            ("stage_id", data["stage_id"])
+        ])
+####################################################################################
+####################################################################################
+####################################################################################
 
 @pytest.fixture(scope='session')
 def data_vehicle_to_attached_file(session, faker, data_vehicle):
@@ -229,7 +364,9 @@ def data_vehicle_to_attached_file(session, faker, data_vehicle):
         })
     r = VehicleToAttachedFile(session).add(json=body)
     LOGGER.info(f"VehicleToAttachedFile: {r.json()}")
-    yield {"body": body, "ids": r.json()['result']}
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    VehicleToAttachedFile(session).delete_many_by("id", ids)
 
 
 @pytest.fixture(scope='session')
@@ -243,7 +380,9 @@ def data_vehicle_part_type(session, faker):
         })
     r = VehiclePartType(session).add(json=body)
     LOGGER.info(f"VehiclePartType: {r.json()}")
-    yield {"body": body, "ids": r.json()['result']} 
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    VehiclePartType(session).delete_many_by("id", ids) 
 
 
 @pytest.fixture(scope='session')
@@ -257,11 +396,13 @@ def data_vehicle_part(session, faker, data_vehicle, data_vehicle_part_type):
         })
     r = VehiclePart(session).add(json=body)
     LOGGER.info(f"VehiclePart: {r.json()}")
-    yield {"body": body, "ids": r.json()['result']}
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    VehiclePart(session).delete_many_by("id", ids)
 
 
 @pytest.fixture(scope='session')
-def data_vehicle_camera(session, faker, data_camera_availability, data_vehicle_part):
+def data_vehicle_camera(session, faker, data_camera_availability, data_vehicle_part, data_loaded_file):
     body = {"values": []}
     for i in range(5):
         body["values"].append({
@@ -270,9 +411,9 @@ def data_vehicle_camera(session, faker, data_camera_availability, data_vehicle_p
             "camera_availability_id": data_camera_availability["ids"][i],
             "hls_second_stream_url": "http://localhost:80",
             "hls_first_stream_url": "http://localhost:80",
-            "camera_position_id": 0,
+            "camera_position_id": i,
             "stream_resolution": faker.random_digit(),
-            "installation_site": 0,
+            "installation_site": data_loaded_file["ids"][0],
             "rtsp_second_url": "rtsp://admin:admin@127.0.0.1/baz/quux/SourceEndpoint.video:1:1",
             "stream_bitrate": faker.random_digit(),
             "rtsp_first_url": "rtsp://admin:admin@127.0.0.1/foo/bar/SourceEndpoint.video:0:0",
@@ -293,7 +434,29 @@ def data_vehicle_camera(session, faker, data_camera_availability, data_vehicle_p
         })
     r = VehicleCamera(session).add(json=body)
     LOGGER.info(f"VehicleCamera: {r.json()}")
-    yield {"body": body, "ids": r.json()['result']}
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    # VehicleCamera(session).delete_many_by("id", ids)
+
+
+@pytest.fixture(scope='session')
+def data_vehicle_camera_error(session, faker, data_vehicle_camera):
+    body = {"values": []}
+    for i in range(5):
+        body["values"].append({
+            "vehicle_camera_id": data_vehicle_camera["ids"][i],
+            "occurred_at": now_millis(),
+            "code": faker.random_digit_not_null()
+        })
+    r = VehicleCameraError(session).add(json=body)
+    LOGGER.info(f"VehicleCameraError: {r.json()}")
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    for data in body["values"]:
+        VehicleCameraError(session).delete_by([
+            ("vehicle_camera_id", data["vehicle_camera_id"]),
+            ("code", data["code"])
+        ])
 
 
 @pytest.fixture(scope='session', autouse=True)
@@ -302,8 +465,11 @@ def populate(
     data_existence_type,
     data_mobile_operator,
     data_vehicle_type,
+    data_vehicle_template,
     data_vehicle,
     data_vehicle_error,
+    data_contract,
+    data_contract_stage,
     data_vehicle_to_stage,
     data_vehicle_to_attached_file,
     data_vehicle_part_type,

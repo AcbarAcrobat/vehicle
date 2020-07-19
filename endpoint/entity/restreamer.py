@@ -3,4 +3,4 @@ from endpoint import BaseEndpoint
 
 class Restreamer(BaseEndpoint):
 
-    PATH = 'entity/restreamer/'
+    PATH = 'vehicle_api/entity/restreamer/'

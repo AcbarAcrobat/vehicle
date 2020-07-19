@@ -3,4 +3,4 @@ from endpoint import BaseEndpoint
 
 class CameraAvailability(BaseEndpoint):
 
-    PATH = 'entity/camera_availability/'
+    PATH = 'vehicle_api/entity/camera_availability/'

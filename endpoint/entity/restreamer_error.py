@@ -3,4 +3,4 @@ from endpoint import BaseEndpoint
 
 class RestreamerError(BaseEndpoint):
 
-    PATH = 'entity/restreamer_error/'
+    PATH = 'vehicle_api/entity/restreamer_error/'

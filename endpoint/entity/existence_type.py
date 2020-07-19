@@ -3,4 +3,4 @@ from endpoint import BaseEndpoint
 
 class ExistenceType(BaseEndpoint):
 
-    PATH = 'entity/existence_type/'
+    PATH = 'vehicle_api/entity/existence_type/'

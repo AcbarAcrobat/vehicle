@@ -10,10 +10,13 @@ class BaseEndpoint(object):
     PATH = ''
     APPROVE_PATH = ''
 
-    def __init__(self, session, token=None):
+    def __init__(self, session, url=None, token=None):
         self.session = session
         self.token = token
-        self.url = config['base_url'] + self.PATH
+        if url is None:
+            self.url = config['base_url'] + self.PATH
+        else:
+            self.url = url + self.PATH
 
     def auth_before(func):
         @functools.wraps(func)
@@ -24,6 +27,7 @@ class BaseEndpoint(object):
                     'password': config['password'],
                 })
                 self.token = {'token': r.json()['result']['token']}
+                # self.token = {'token': "foo-bar-baz"}
 
             body = {
                 ** self.token,
@@ -99,6 +103,37 @@ class BaseEndpoint(object):
     @auth_before
     def delete(self, **kwargs):
         s = self.session
+        return s.post(self.url + 'delete', **kwargs)
+
+    @auth_before
+    def delete_many_by(self, attr:str, value_list:list, **kwargs):
+        s = self.session
+        body = {
+            ** kwargs['json'],
+            ** {
+                "filter_by": {
+                    "attribute": attr, "operator": "in", "value":value_list
+            }
+        }}
+        kwargs['json'] = body
+        LOGGER.info(f"Deleting {self.PATH}: by {attr} in {value_list}...")
+        return s.post(self.url + 'delete', **kwargs)
+
+    
+    @auth_before
+    def delete_by(self, attrs:list, **kwargs):
+        s = self.session
+        filter_by = [ 
+            {"attribute": attr, "operator": "=", "value": value}
+            for attr, value in attrs
+        ]
+        body = {
+            ** kwargs['json'],
+            ** {
+                "filter_by": filter_by
+        }}
+        kwargs['json'] = body
+        LOGGER.info(f"Deleting {self.PATH}: {attrs} ...")
         return s.post(self.url + 'delete', **kwargs)
 
     @auth_before

@@ -3,4 +3,4 @@ from endpoint import BaseEndpoint
 
 class MobileOperator(BaseEndpoint):
 
-    PATH = 'entity/mobile_operator/'
+    PATH = 'vehicle_api/entity/mobile_operator/'
