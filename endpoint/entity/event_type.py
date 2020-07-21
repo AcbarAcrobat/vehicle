@@ -1,6 +1,9 @@
 from endpoint import BaseEndpoint
+from pytest_testconfig import config
 
 
 class EventType(BaseEndpoint):
 
-    PATH = 'vehicle_api/entity/event_type/'
+    def __init__(self, session):
+        super().__init__(session)
+        self.URL = config["vehicle_url"] + 'entity/event_type/'

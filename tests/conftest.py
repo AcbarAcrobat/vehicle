@@ -1,6 +1,6 @@
 import pytest
-import requests
-from requests_toolbelt import sessions
+# from requests_toolbelt import sessions
+from requests import session as requests_session
 from pytest_testconfig import config
 from termcolor import colored
 from faker import Faker
@@ -9,26 +9,28 @@ from xdist.scheduler.loadscope import LoadScopeScheduling
 from endpoint import *
 from datetime import datetime as dt
 
+
 def now_millis():
     return round(dt.utcnow().timestamp()*1000)
 
 
-@pytest.fixture(scope='session')
-def token():
-    r = requests.post(config['auth_server'] + 'netris/login', json={
-        'login': config['login'],
-        'password': config['password'],
-    })
-    if 'result' not in r.json():
-        LOGGER.warning(r.json())
-        r.json()['result']  # Чтобы бросить KeyError
+# @pytest.fixture(scope='session')
+# def token():
+#     r = requests.post(config['auth_server'] + 'netris/login', json={
+#         'login': config['login'],
+#         'password': config['password'],
+#     })
+#     if 'result' not in r.json():
+#         LOGGER.warning(r.json())
+#         r.json()['result']  # Чтобы бросить KeyError
 
-    yield {'token': r.json()['result']['token']}
+#     yield {'token': r.json()['result']['token']}
 
 
 @pytest.fixture(scope='session')
 def session():
-    s = sessions.BaseUrlSession(base_url=config['base_url'])
+    # s = sessions.BaseUrlSession(base_url=config['base_url'])
+    s = requests_session()
     s.headers = {
         'Content-Type': 'application/json',
         'Accept-Encoding': 'gzip, deflate, br',
@@ -265,8 +267,8 @@ def data_region(session, faker, data_loaded_file):
             "title": faker.uuid4()
         })
     r = Region(session).add(json=body)
-    ids = r.json()['result']
     LOGGER.info(f"Region: {r.json()}")
+    ids = r.json()['result']
     yield {"body": body, "ids": ids}
     Region(session).delete_many_by("id", ids)
 

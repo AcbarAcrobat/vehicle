@@ -1,5 +1,9 @@
 from endpoint import BaseEndpoint
+from pytest_testconfig import config
+
 
 class Contract(BaseEndpoint):
 
-    PATH = 'immovable_api/entity/contract/'
+    def __init__(self, session):
+        super().__init__(session)
+        self.URL = config["immovable_url"] + 'entity/contract/'

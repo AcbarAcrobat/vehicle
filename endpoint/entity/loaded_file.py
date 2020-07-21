@@ -1,6 +1,9 @@
 from endpoint import BaseEndpoint
+from pytest_testconfig import config
 
 
 class LoadedFile(BaseEndpoint):
 
-    PATH = 'immovable_api/entity/loaded_file/'
+    def __init__(self, session):
+        super().__init__(session)
+        self.URL = config["immovable_url"] + 'entity/loaded_file/'

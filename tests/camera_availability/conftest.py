@@ -1,6 +1,7 @@
 import pytest
 from endpoint import CameraAvailability
 from helper.logger import LOGGER
+from pytest_testconfig import config
 
 
 @pytest.fixture(scope='class')

@@ -1,8 +1,7 @@
-base_url: http://10.10.27.37/
+vehicle_url: http://10.10.27.37/vehicle_api/
+immovable_url: http://10.10.27.37/immovable_api/
+
 login: test_ABM_admin
 password: test_ABM_admin
 
-# immovable_server: http://192.168.0.125/immovable_api/
-
-# auth_server: https://safecity.abm-jsc.ru/immovable_api/
 auth_server: http://10.10.27.37/immovable_api/
