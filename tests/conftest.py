@@ -355,14 +355,14 @@ def data_vehicle_to_stage(session, faker, data_vehicle, data_contract_stage):
 ####################################################################################
 
 @pytest.fixture(scope='session')
-def data_vehicle_to_attached_file(session, faker, data_vehicle):
+def data_vehicle_to_attached_file(session, faker, , data_loaded_file):
     body = {"values": []}
     for i in range(5):
         body["values"].append({
             "vehicle_id": data_vehicle["ids"][i],
             "file_name": f"{faker.uuid4()}.pdf",
             "order_id": None,
-            "file_id": faker.random_number()
+            "file_id": data_loaded_file["ids"][i]
         })
     r = VehicleToAttachedFile(session).add(json=body)
     LOGGER.info(f"VehicleToAttachedFile: {r.json()}")
