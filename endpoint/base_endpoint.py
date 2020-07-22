@@ -8,7 +8,7 @@ from helper.logger import LOGGER
 class BaseEndpoint(object):
 
     URL = ''
-    APPROVE_URL =  ''
+    APPROVE_PATH =  ''
 
     def __init__(self, session):
         self.session = session

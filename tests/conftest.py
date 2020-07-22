@@ -155,7 +155,7 @@ def data_vehicle_template(session, faker, data_vehicle_type):
     for i in range(5):
         body["values"].append({
             "title": faker.uuid4(),
-            "type_id ": data_vehicle_type["ids"][i]
+            "type_id": data_vehicle_type["ids"][i]
         })
     r = VehicleTemplate(session).add(json=body)
     LOGGER.info(f"VehicleTemplate: {r.json()}")
