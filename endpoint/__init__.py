@@ -6,7 +6,8 @@ from .entity.contract import Contract
 from .entity.contract_stage import ContractStage
 from .entity.event_type import EventType
 from .entity.existence_type import ExistenceType
-from .entity.loaded_file import LoadedFile
+from .entity.loaded_file_immovable import LoadedFileImmovable
+from .entity.loaded_file_vehicle import LoadedFileVehicle
 from .entity.mobile_operator import MobileOperator
 from .entity.region import Region
 from .entity.user_logs import UserLogs
