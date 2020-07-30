@@ -29,6 +29,7 @@ def now_millis():
 
 @pytest.fixture(scope='session')
 def session():
+    LOGGER.info(f"seed: `0rJlov L0h`")
     # s = sessions.BaseUrlSession(base_url=config['base_url'])
     s = requests_session()
     s.headers = {
