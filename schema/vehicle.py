@@ -4,6 +4,7 @@ from schema.base import *
 vehicle_fk_properties = {
     "subscriber_identification_module_number": {"type": "string"},
     "international_mobile_equipment_identity": {"type": "string"},
+    "financing_type_id": {"type": "null"},
     "vehicle_identification_number": {"type": "string"},
     "computer_serial_number": {"type": "string"},
     "is_stats_check_enabled": {"type": "boolean"},
@@ -14,6 +15,7 @@ vehicle_fk_properties = {
     "sync_with_netris": {"type": "boolean"},
     "attached_files": array_of("integer"),
     "approving_date": {"type": "integer"},
+    "financing_type_id": {"type": "null"}, 
     "chat_room_id": {"type": "integer"},
     "availability": {"type": "integer"},
     "template_id": {"type": "integer"},
@@ -48,6 +50,7 @@ vehicle_fk_properties = {
 error_fk_properties = {
     "vehicle_id": {"type": "integer"},
     "occurred_at": {"type": "integer"},
+    "outdated_at": {"type": "null"},
     "code": {"type": "integer"}
 }
 
