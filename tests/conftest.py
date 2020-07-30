@@ -1,5 +1,4 @@
 import pytest
-# from requests_toolbelt import sessions
 from requests import session as requests_session
 from pytest_testconfig import config
 from termcolor import colored
@@ -14,22 +13,8 @@ def now_millis():
     return round(dt.utcnow().timestamp()*1000)
 
 
-# @pytest.fixture(scope='session')
-# def token():
-#     r = requests.post(config['auth_server'] + 'netris/login', json={
-#         'login': config['login'],
-#         'password': config['password'],
-#     })
-#     if 'result' not in r.json():
-#         LOGGER.warning(r.json())
-#         r.json()['result']  # Чтобы бросить KeyError
-
-#     yield {'token': r.json()['result']['token']}
-
-
 @pytest.fixture(scope='session')
 def session():
-    # s = sessions.BaseUrlSession(base_url=config['base_url'])
     s = requests_session()
     s.headers = {
         'Content-Type': 'application/json',
@@ -237,7 +222,7 @@ def data_vehicle_error(session, faker, data_vehicle):
 ####################################################################################
 ####################################################################################
 @pytest.fixture(scope='session')
-def data_loaded_file(session, faker):
+def data_loaded_file_vehicle(session, faker):
     body = {"values": []}
     for i in range(5):
         body["values"].append({
@@ -250,20 +235,41 @@ def data_loaded_file(session, faker):
             "sha512": faker.sha256()+faker.sha256(),
             "md5": faker.md5()
         })
-    r = LoadedFile(session).add(json=body)
-    LOGGER.info(f"LoadedFile: {r.json()}")
+    r = LoadedFileVehicle(session).add(json=body)
+    LOGGER.info(f"LoadedFileVehicle: {r.json()}")
     ids = r.json()['result']
     yield {"body": body, "ids": ids}
-    # LoadedFile(session).delete_many_by("id", ids)
+    LoadedFileVehicle(session).delete_many_by("id", ids)
+    
+
+@pytest.fixture(scope='session')
+def data_loaded_file_immovable(session, faker):
+    body = {"values": []}
+    for i in range(5):
+        body["values"].append({
+            "file_extension": ".json",
+            "storage_path": faker.bothify("##??"),
+            "storage_file_name": faker.uuid4(),
+            "file_size": faker.random_number(),
+            "uploaded_at": now_millis(),
+            "full_file_name": faker.uuid4(),
+            "sha512": faker.sha256()+faker.sha256(),
+            "md5": faker.md5()
+        })
+    r = LoadedFileImmovable(session).add(json=body)
+    LOGGER.info(f"LoadedFileImmovable: {r.json()}")
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    LoadedFileImmovable(session).delete_many_by("id", ids)
 
 
 @pytest.fixture(scope='session')
-def data_region(session, faker, data_loaded_file):
+def data_region(session, faker, data_loaded_file_immovable):
     body = {"values": []}
     for i in range(5):
         body["values"].append({
             "created_at_epoch": now_millis(),
-            "osm_id": data_loaded_file["ids"][i],
+            "osm_id": data_loaded_file_immovable["ids"][i],
             "title": faker.uuid4()
         })
     r = Region(session).add(json=body)
@@ -355,14 +361,14 @@ def data_vehicle_to_stage(session, faker, data_vehicle, data_contract_stage):
 ####################################################################################
 
 @pytest.fixture(scope='session')
-def data_vehicle_to_attached_file(session, faker, , data_loaded_file):
+def data_vehicle_to_attached_file(session, faker, data_vehicle, data_loaded_file_vehicle):
     body = {"values": []}
     for i in range(5):
         body["values"].append({
             "vehicle_id": data_vehicle["ids"][i],
             "file_name": f"{faker.uuid4()}.pdf",
             "order_id": None,
-            "file_id": data_loaded_file["ids"][i]
+            "file_id": data_loaded_file_vehicle["ids"][i]
         })
     r = VehicleToAttachedFile(session).add(json=body)
     LOGGER.info(f"VehicleToAttachedFile: {r.json()}")
@@ -404,7 +410,7 @@ def data_vehicle_part(session, faker, data_vehicle, data_vehicle_part_type):
 
 
 @pytest.fixture(scope='session')
-def data_vehicle_camera(session, faker, data_camera_availability, data_vehicle_part, data_loaded_file):
+def data_vehicle_camera(session, faker, data_camera_availability, data_vehicle_part, data_loaded_file_vehicle):
     body = {"values": []}
     for i in range(5):
         body["values"].append({
@@ -415,7 +421,7 @@ def data_vehicle_camera(session, faker, data_camera_availability, data_vehicle_p
             "hls_first_stream_url": "http://localhost:80",
             "camera_position_id": i,
             "stream_resolution": faker.random_digit(),
-            "installation_site": data_loaded_file["ids"][0],
+            "installation_site": data_loaded_file_vehicle["ids"][0],
             "rtsp_second_url": "rtsp://admin:admin@127.0.0.1/baz/quux/SourceEndpoint.video:1:1",
             "stream_bitrate": faker.random_digit(),
             "rtsp_first_url": "rtsp://admin:admin@127.0.0.1/foo/bar/SourceEndpoint.video:0:0",
@@ -463,20 +469,20 @@ def data_vehicle_camera_error(session, faker, data_vehicle_camera):
 
 @pytest.fixture(scope='session', autouse=True)
 def populate(
-    data_camera_availability,
-    data_existence_type,
-    data_mobile_operator,
-    data_vehicle_type,
     data_vehicle_template,
     data_vehicle,
     data_vehicle_error,
+    data_loaded_file_immovable,
+    data_loaded_file_vehicle,
+    data_region,
     data_contract,
     data_contract_stage,
     data_vehicle_to_stage,
     data_vehicle_to_attached_file,
     data_vehicle_part_type,
     data_vehicle_part,
-    data_vehicle_camera
+    data_vehicle_camera,
+    data_vehicle_camera_error
 ):
     s = '''
 \t+-----------------+
