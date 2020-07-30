@@ -2,7 +2,7 @@ from endpoint import BaseEndpoint
 from pytest_testconfig import config
 
 
-class LoadedFileImmovable(BaseEndpoint):
+class LoadedFile(BaseEndpoint):
 
     def __init__(self, session):
         super().__init__(session)
