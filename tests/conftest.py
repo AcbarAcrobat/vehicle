@@ -251,6 +251,9 @@ def data_loaded_file(session, faker):
             "md5": faker.md5()
         })
     r = LoadedFile(session).add(json=body)
+    LOGGER.info(f"LoadedFile URL: `{r.url}`")
+    LOGGER.info(f"LoadedFile HDR: `{r.request.headers}`")
+    LOGGER.info(f"LoadedFile BDY: `{r.request.body}`")
     LOGGER.info(f"LoadedFile: {r.json()}")
     ids = r.json()['result']
     yield {"body": body, "ids": ids}
@@ -355,7 +358,7 @@ def data_vehicle_to_stage(session, faker, data_vehicle, data_contract_stage):
 ####################################################################################
 
 @pytest.fixture(scope='session')
-def data_vehicle_to_attached_file(session, faker, , data_loaded_file):
+def data_vehicle_to_attached_file(session, faker, data_vehicle, data_loaded_file):
     body = {"values": []}
     for i in range(5):
         body["values"].append({
