@@ -13,7 +13,7 @@ vehicle_camera_fk_properties = {
     "rtsp_second_url": {"type": "string"},
     "stream_bitrate": {"type": "integer"},
     "rtsp_first_url": {"type": "string"},
-    "daytime_image": {"type": "integer"},
+    "daytime_image": any_of_types("null", "integer"),
     "night_image": {"type": "integer"},
     "rtsp_camera": {"type": "string"},
     "description": {"type": "string"},

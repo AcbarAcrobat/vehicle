@@ -14,11 +14,11 @@ class TestAdd:
         endpoint.delete_by_ids(self.ids)
 
     @allure.title("Добавление одного экземляра сущности")
-    def test_add_one(self, faker, endpoint, vehicle_id):
+    def test_add_one(self, faker, endpoint, data_vehicle, data_loaded_file_vehicle):
         body = {
             "values": {
-                "file_id": faker.random_number(),
-                "vehicle_id": vehicle_id,
+                "file_id": data_loaded_file_vehicle["ids"][0],
+                "vehicle_id": data_vehicle["ids"][0],
                 "file_name": f"{faker.uuid4()}.pdf"
             }
         }
@@ -40,15 +40,15 @@ class TestAdd:
         AssertThat(resp['file_name']).IsEqualTo(body['values']['file_name'])
 
     @allure.title("Множественное добавление экземляров сущности")
-    def test_add_many(self, faker, endpoint, vehicle_id):
+    def test_add_many(self, faker, endpoint, data_vehicle, data_loaded_file_vehicle):
         body = {
             "values": [{
-                "file_id": faker.random_number(),
-                "vehicle_id": vehicle_id,
+                "file_id": data_loaded_file_vehicle["ids"][0],
+                "vehicle_id": data_vehicle["ids"][0],
                 "file_name": f"{faker.uuid4()}.pdf"
             }, {
-                "file_id": faker.random_number(),
-                "vehicle_id": vehicle_id,
+                "file_id": data_loaded_file_vehicle["ids"][1],
+                "vehicle_id": data_vehicle["ids"][1],
                 "file_name": f"{faker.uuid4()}.pdf"
             }]
         }

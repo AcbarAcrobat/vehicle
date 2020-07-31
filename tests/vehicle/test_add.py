@@ -15,10 +15,10 @@ class TestAdd:
         endpoint.delete_by_ids(self.ids)
 
     @allure.title("Добавление одного экземляра сущности")
-    def test_add_one(self, faker, endpoint):
+    def test_add_one(self, faker, endpoint, data_vehicle_template):
         body = {
             "values": {
-                "type_id": 1, "login": faker.uuid4()
+                "type_id": 1, "login": faker.uuid4(), "template_id": data_vehicle_template["ids"][0]
             }
         }
 
@@ -37,11 +37,11 @@ class TestAdd:
         AssertThat(resp['login']).IsEqualTo(body['values']['login'])
 
     @allure.title("Множественное добавление экземляров сущности")
-    def test_add_many(self, faker, endpoint):
+    def test_add_many(self, faker, endpoint, data_vehicle_template):
         body = {
             "values": [
-                {"type_id": 1, "login": faker.uuid4()},
-                {"type_id": 2, "login": faker.uuid4()}
+                {"type_id": 1, "login": faker.uuid4(), "template_id": data_vehicle_template["ids"][0]},
+                {"type_id": 2, "login": faker.uuid4(), "template_id": data_vehicle_template["ids"][1]}
             ]
         }
 

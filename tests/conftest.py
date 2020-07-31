@@ -166,6 +166,7 @@ def data_vehicle(session, faker, data_mobile_operator, data_vehicle_type, data_e
             "sync_with_netris": True,
             # "attached_files": array_of("integer"),
             "approving_date": round(dt.utcnow().timestamp()*1000),
+            "financing_type_id": 1,
             "chat_room_id": faker.random_number(),
             "availability": data_existence_type["ids"][i],
             "template_id": data_vehicle_template["ids"][i],
