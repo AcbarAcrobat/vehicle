@@ -8,7 +8,7 @@ from endpoint import VehicleCamera
 from truth.truth import AssertThat
 
 
-class TestGet:
+class TestVehiclePartGet:
 
     @allure.title("Схема ответа")
     def test_schema(self, endpoint):

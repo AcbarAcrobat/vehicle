@@ -5,7 +5,7 @@ from endpoint import Vehicle
 from truth.truth import AssertThat
 
 
-class TestAdd:
+class TestVehicleAdd:
 
     ids = None
 

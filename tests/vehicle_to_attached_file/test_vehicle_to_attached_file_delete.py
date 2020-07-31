@@ -4,7 +4,7 @@ from helper import LOGGER
 from truth.truth import AssertThat
 
 
-class TestDelete:
+class TestVehicleToAttachedFileDelete:
 
     @allure.title("Удаление одного экземляра сущности")
     def test_delete_one(self, faker, endpoint, vehicle_id):

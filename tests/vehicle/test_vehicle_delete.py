@@ -5,7 +5,7 @@ from endpoint import Vehicle
 from truth.truth import AssertThat
 
 
-class TestDelete:
+class TestVehicleDelete:
 
     @allure.title("Удаление одного экземляра сущности")
     def test_delete_one(self, faker, endpoint, data_vehicle, data_vehicle_type, data_vehicle_template):

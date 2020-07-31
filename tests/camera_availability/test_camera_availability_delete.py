@@ -5,7 +5,7 @@ from endpoint import CameraAvailability
 from truth.truth import AssertThat
 
 
-class TestDelete:
+class TestCameraAvailabilityDelete:
 
     @allure.title("Удаление одного экземляра сущности")
     def test_delete_one(self, faker, endpoint):

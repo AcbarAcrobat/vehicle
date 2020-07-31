@@ -8,7 +8,7 @@ from endpoint import CameraAvailability
 from truth.truth import AssertThat
 
 
-class TestGet:
+class TestCameraAvailabilityGet:
 
     @allure.title("Схема ответа")
     

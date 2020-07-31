@@ -4,7 +4,7 @@ from helper import LOGGER
 from truth.truth import AssertThat
 
 
-class TestAdd:
+class TestVehicleToStageAdd:
 
     @allure.title("Добавление одного экземляра сущности")
     def test_add_one(self, faker, endpoint):

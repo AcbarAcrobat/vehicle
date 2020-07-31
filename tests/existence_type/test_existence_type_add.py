@@ -5,7 +5,7 @@ from endpoint import ExistenceType
 from truth.truth import AssertThat
 
 
-class TestAdd:
+class TestExistenceTypeAdd:
 
     ids = None
 

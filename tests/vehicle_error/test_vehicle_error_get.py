@@ -7,7 +7,7 @@ from schema.base import skeleton, build
 from truth.truth import AssertThat
 
 
-class TestGet:
+class TestVehicleErrorGet:
 
     @allure.title("Схема ответа")
     def test_schema(self, endpoint):

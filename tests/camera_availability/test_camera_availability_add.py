@@ -5,7 +5,7 @@ from endpoint import CameraAvailability
 from truth.truth import AssertThat
 
 
-class TestAdd:
+class TestCameraAvailabilityAdd:
 
     ids = None
 

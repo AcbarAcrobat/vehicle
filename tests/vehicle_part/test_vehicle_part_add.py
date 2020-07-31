@@ -4,7 +4,7 @@ from helper import LOGGER
 from truth.truth import AssertThat
 
 
-class TestAdd:
+class TestVehiclePartAdd:
 
     ids = None
 

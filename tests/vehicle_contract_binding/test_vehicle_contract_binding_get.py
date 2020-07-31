@@ -8,7 +8,7 @@ from truth.truth import AssertThat
 from endpoint import VehicleContractBindingToStage
 
 
-class TestGet:
+class TestVehicleContractBindingGet:
 
     @allure.title("Схема ответа")
     def test_schema(self, endpoint):

@@ -5,7 +5,7 @@ from endpoint import CameraAvailability
 from truth.truth import AssertThat
 
 
-class TestUpdate:
+class TestCameraAvailabilityUpdate:
 
     @allure.title("Обновление экземляра сущности по первичному ключу")
     def test_update_by_id(self, endpoint, faker, new_entity, body):

@@ -7,7 +7,7 @@ from schema.base import skeleton, build
 from truth.truth import AssertThat
 
 
-class TestGet:
+class TestExistenceTypeGet:
 
     @allure.title("Схема ответа")
     def test_schema(self, endpoint):

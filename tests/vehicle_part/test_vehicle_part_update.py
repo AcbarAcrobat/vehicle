@@ -5,7 +5,7 @@ from truth.truth import AssertThat
 from endpoint import Vehicle
 
 
-class TestUpdate:
+class TestVehiclePartUpdate:
 
     @allure.title("Обновление экземляра сущности по первичному ключу")
     def test_update_by_id(self, session, endpoint, faker, new_entity, body, data_vehicle):

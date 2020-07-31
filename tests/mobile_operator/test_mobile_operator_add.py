@@ -5,7 +5,7 @@ from endpoint import MobileOperator
 from truth.truth import AssertThat
 
 
-class TestAdd:
+class TestMobileOperatorAdd:
 
     ids = None
 

@@ -5,7 +5,7 @@ from endpoint import VehicleContractBinding
 from truth.truth import AssertThat
 
 
-class TestAdd:
+class TestVehicleContractBindingAdd:
 
     ids = None
 
