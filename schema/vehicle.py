@@ -49,7 +49,8 @@ vehicle_fk_properties = {
 error_fk_properties = {
     "vehicle_id": {"type": "integer"},
     "occurred_at": {"type": "integer"},
-    "code": {"type": "integer"}
+    "code": {"type": "integer"},
+    "outdated_at": any_of_types("null", "integer")
 }
 
 status_fk_properties = {

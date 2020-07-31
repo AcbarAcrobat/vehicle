@@ -68,7 +68,7 @@ class TestGet:
     @allure.title("Получение списка экземляров сущности по условию 'И'")
     def test_filter_by_multiple_attributes(self, session, data_camera_availability):
         id_ = data_camera_availability["ids"][0]
-        name = data_camera_availability["body"]["values"][0]["data_camera_availability"]
+        name = data_camera_availability["body"]["values"][0]["name"]
         body = {
             "filter_by": [
                 {'attribute': 'id', 'operator': '>=', 'value': id_},
@@ -86,7 +86,7 @@ class TestGet:
     @allure.title("Получение списка экземляров сущности по условию 'ИЛИ'")
     def test_search_by(self, session, data_camera_availability):
         id_ = data_camera_availability["ids"][0]
-        name = data_camera_availability["body"]["values"][0]["data_camera_availability"]
+        name = data_camera_availability["body"]["values"][0]["name"]
         body = {
             "search_by": [
                 {'attribute': 'id', 'operator': '>=', 'value': id_},

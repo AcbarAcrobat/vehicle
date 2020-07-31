@@ -134,8 +134,9 @@ class TestGet:
             AssertThat(data['id']).IsAtMost(100)
 
     @allure.title("Получение списка экземляров сущности по условию дочерней сущности")
-    def test_filter_by_child_attribute(self, session, endpoint):
-        child_id = VehicleContractBindingToStage(session).get_random()['stage_id']
+    def test_filter_by_child_attribute(self, session, endpoint, data_vehicle_contract_binding_to_stage):
+        child_id = data_vehicle_contract_binding_to_stage["body"]["values"][0]["stage_id"]
+        # (session).get_random()['stage_id']
         LOGGER.info(f'VehicleContractBindingToStage: {child_id}')
 
         body = {

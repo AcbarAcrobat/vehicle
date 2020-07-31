@@ -210,7 +210,8 @@ def data_vehicle_error(session, faker, data_vehicle):
         body["values"].append({
             "code": faker.random_digit(),
             "vehicle_id":data_vehicle["ids"][i],
-            "occurred_at": now_millis()
+            "occurred_at": now_millis(),
+            "outdated_at": now_millis()
         })
     r = VehicleError(session).add(json=body)
     LOGGER.info(f"VehicleError: {r.json()}")
@@ -379,6 +380,40 @@ def data_vehicle_to_attached_file(session, faker, data_vehicle, data_loaded_file
 
 
 @pytest.fixture(scope='session')
+def data_vehicle_contract_binding(session, faker, data_vehicle, data_contract):
+    body = {"values": []}
+    for i in range(5):
+        body["values"].append({
+            "vehicle_id": data_vehicle["ids"][i],
+            "contract_id": data_contract["ids"][i]
+        })
+    r = VehicleContractBinding(session).add(json=body)
+    LOGGER.info(f"VehicleContractBinding: {r.json()}")
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    VehicleContractBinding(session).delete_many_by("id", ids)
+
+
+@pytest.fixture(scope='session')
+def data_vehicle_contract_binding_to_stage(session, faker, data_vehicle_contract_binding, data_contract_stage):
+    body = {"values": []}
+    for i in range(5):
+        body["values"].append({
+            "vehicle_contract_binding_id": data_vehicle_contract_binding["ids"][i],
+            "stage_id": data_contract_stage["ids"][i]
+        })
+    r = VehicleContractBindingToStage(session).add(json=body)
+    LOGGER.info(f"VehicleContractBindingToStage: {r.json()}")
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    for data in body["values"]:
+        VehicleContractBindingToStage(session).delete_by([
+            ("vehicle_contract_binding_id", data["vehicle_contract_binding_id"]),
+            ("stage_id", data["stage_id"])
+        ])
+
+
+@pytest.fixture(scope='session')
 def data_vehicle_part_type(session, faker):
     body = {"values": []}
     for _ in range(5):
@@ -455,7 +490,8 @@ def data_vehicle_camera_error(session, faker, data_vehicle_camera):
         body["values"].append({
             "vehicle_camera_id": data_vehicle_camera["ids"][i],
             "occurred_at": now_millis(),
-            "code": faker.random_digit_not_null()
+            "code": faker.random_digit_not_null(),
+            "outdated_at": now_millis()
         })
     r = VehicleCameraError(session).add(json=body)
     LOGGER.info(f"VehicleCameraError: {r.json()}")

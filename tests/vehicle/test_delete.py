@@ -8,9 +8,13 @@ from truth.truth import AssertThat
 class TestDelete:
 
     @allure.title("Удаление одного экземляра сущности")
-    def test_delete_one(self, faker, endpoint):
+    def test_delete_one(self, faker, endpoint, data_vehicle, data_vehicle_type, data_vehicle_template):
         body = {
-            "values": {"type_id": 1, "login": faker.uuid4()}
+            "values": {
+                "type_id": data_vehicle_type["ids"][0],
+                "login": faker.uuid4(),
+                "template_id": data_vehicle_template["ids"][0]
+            }
         }
 
         id_ = endpoint.add(json=body).json()['result']
@@ -25,12 +29,19 @@ class TestDelete:
 
 
     @allure.title("Множественное удаление экземляров сущности")
-    def test_delete_many(self, faker, endpoint):
+    def test_delete_many(self, faker, endpoint, data_vehicle, data_vehicle_type, data_vehicle_template):
         body = {
             "values": [
-                {"type_id": 1, "login": faker.uuid4()},
-                {"type_id": 1, "login": faker.uuid4()},
-                {"type_id": 1, "login": faker.uuid4()}
+                {
+                    "type_id": data_vehicle_type["ids"][0],
+                    "login": faker.uuid4(),
+                    "template_id": data_vehicle_template["ids"][0]
+                },
+                {
+                    "type_id": data_vehicle_type["ids"][1],
+                    "login": faker.uuid4(),
+                    "template_id": data_vehicle_template["ids"][1]
+                }
         ]}
 
         ids = endpoint.add(json=body).json()['result']
