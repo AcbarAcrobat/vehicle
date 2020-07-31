@@ -12,7 +12,8 @@ class TestAdd:
     @pytest.fixture(scope='function', autouse=True)
     def cleanup(self, endpoint):
         yield
-        endpoint.delete_by_ids(self.ids)
+        if self.ids:
+            endpoint.delete_by_ids(self.ids)
 
     @allure.title("Добавление одного экземляра сущности")
     def test_add_one(self, faker, endpoint, data_vehicle_template):
@@ -45,7 +46,9 @@ class TestAdd:
             ]
         }
 
-        ids = endpoint.add(json=body).json()['result']
+        r = endpoint.add(json=body)
+        LOGGER.info(r.json())
+        ids = r.json()['result']
         LOGGER.info(f"New ids: {ids}")
         AssertThat(ids).HasSize(2)
         self.ids = ids

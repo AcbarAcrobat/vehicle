@@ -130,8 +130,9 @@ class TestGet:
             AssertThat(data['vehicle_id']).IsEqualTo(vehicle_id)
 
     @allure.title("Получение списка экземляров сущности по условию дочерней сущности")
-    def test_filter_by_child_attribute(self, session, endpoint):
-        child_id = VehicleCamera(session).get_random()['id']
+    def test_filter_by_child_attribute(self, session, endpoint, data_vehicle_camera):
+        # child_id = VehicleCamera(session).get_random()['id']
+        child_id = data_vehicle_camera["ids"][0]
         LOGGER.info(f'VehicleCamera: {child_id}')
 
         body = {

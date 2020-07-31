@@ -10,8 +10,9 @@ def endpoint(session):
 
 
 @pytest.fixture(scope='function')
-def camera_id(session):
-    yield VehicleCamera(session).get_random()['id']
+def camera_id(session, data_vehicle_camera):
+    # yield VehicleCamera(session).get_random()['id']
+    yield data_vehicle_camera["ids"][0]
 
 
 @pytest.fixture(scope='function')

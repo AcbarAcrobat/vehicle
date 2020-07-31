@@ -9,20 +9,21 @@ def endpoint(session):
 
 
 @pytest.fixture(scope='function')
-def vehicle_id(session):
-    yield Vehicle(session).get_random()['id']
+def vehicle_id(session, data_vehicle):
+    # yield Vehicle(session).get_random()['id']
+    yield data_vehicle["ids"][0]
 
 
 @pytest.fixture(scope='function')
-def body(faker, vehicle_id):
+def body(faker, data_vehicle, data_loaded_file_vehicle):
     yield {
         "values": [{
-            "file_id": faker.random_number(),
-            "vehicle_id": vehicle_id,
+            "file_id": data_loaded_file_vehicle["ids"][0],
+            "vehicle_id": data_vehicle["ids"][3],
             "file_name": f"{faker.uuid4()}.pdf"
         }, {
-            "file_id": faker.random_number(),
-            "vehicle_id": vehicle_id,
+            "file_id": data_loaded_file_vehicle["ids"][0],
+            "vehicle_id": data_vehicle["ids"][4],
             "file_name": f"{faker.uuid4()}.pdf"
         }]
     }

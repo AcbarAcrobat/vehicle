@@ -9,8 +9,9 @@ def endpoint(session):
 
 
 @pytest.fixture(scope='function')
-def vehicle_id(session):
-    yield Vehicle(session).get_random()['id']
+def vehicle_id(session, data_vehicle):
+    # yield Vehicle(session).get_random()['id']
+    yield data_vehicle["ids"][0]
 
 
 @pytest.fixture(scope='function')
