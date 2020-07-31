@@ -46,7 +46,10 @@ class TestAdd:
             ]
         }
 
-        ids = endpoint.add(json=body).json()['result']
+        # ids = endpoint.add(json=body).json()['result']
+        r = endpoint.add(json=body)
+        LOGGER.info(r.json())
+        ids = r.json()['result']
         LOGGER.info(f"New ids: {ids}")
         AssertThat(ids).HasSize(2)
         self.ids = ids

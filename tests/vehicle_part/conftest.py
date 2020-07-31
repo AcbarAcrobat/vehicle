@@ -37,7 +37,10 @@ def body(faker, vehicle_id, part_type_id):
 
 @pytest.fixture(scope='function')
 def new_entity(endpoint, body):
-    ids = endpoint.add(json=body).json()['result']
+    # ids = endpoint.add(json=body).json()['result']
+    r = endpoint.add(json=body)
+    LOGGER.info(r.json())
+    ids = r.json()['result']
     LOGGER.info(f"New ids: {ids}")
     yield ids
     endpoint.delete_by_ids(ids)

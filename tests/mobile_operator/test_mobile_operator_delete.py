@@ -1,6 +1,7 @@
 import pytest
 import allure
 from helper import LOGGER
+from endpoint import MobileOperator
 from truth.truth import AssertThat
 
 
@@ -9,11 +10,7 @@ class TestDelete:
     @allure.title("Удаление одного экземляра сущности")
     def test_delete_one(self, faker, endpoint):
         body = {
-            "values": {
-                "name": faker.uuid4(),
-                "full_image": f"images/{faker.uuid4()}.svg",
-                "small_image": f"images/{faker.uuid4()}.svg"
-            }
+            "values": {"name": faker.uuid4()}
         }
 
         id_ = endpoint.add(json=body).json()['result']
@@ -30,18 +27,17 @@ class TestDelete:
     @allure.title("Множественное удаление экземляров сущности")
     def test_delete_many(self, faker, endpoint):
         body = {
-            "values": [{
-                "name": faker.uuid4(),
-                "full_image": f"images/{faker.uuid4()}.svg",
-                "small_image": f"images/{faker.uuid4()}.svg"
-            }, {
-                "name": faker.uuid4(),
-                "full_image": f"images/{faker.uuid4()}.svg",
-                "small_image": f"images/{faker.uuid4()}.svg"
-            }]
+            "values": [
+                {"name": faker.uuid4()},
+                {"name": faker.uuid4()},
+                {"name": faker.uuid4()}
+            ]
         }
 
-        ids = endpoint.add(json=body).json()['result']
+        # ids = endpoint.add(json=body).json()['result']
+        r = endpoint.add(json=body)
+        LOGGER.info(r.json())
+        ids = r.json()['result']
         LOGGER.info(f"New ids: {ids}")
 
         cond = {"filter_by": {"attribute": "id", "operator": "in", "value": ids}}

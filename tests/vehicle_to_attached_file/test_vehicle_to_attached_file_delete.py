@@ -7,9 +7,13 @@ from truth.truth import AssertThat
 class TestDelete:
 
     @allure.title("Удаление одного экземляра сущности")
-    def test_delete_one(self, faker, endpoint, vehicle_id, part_type_id):
+    def test_delete_one(self, faker, endpoint, vehicle_id):
         body = {
-            "values": {"vehicle_id": vehicle_id, "part_type_id": part_type_id}
+            "values": {
+                "file_id": faker.random_number(),
+                "vehicle_id": vehicle_id,
+                "file_name": f"{faker.uuid4()}.pdf"
+            }
         }
 
         id_ = endpoint.add(json=body).json()['result']
@@ -24,14 +28,23 @@ class TestDelete:
 
 
     @allure.title("Множественное удаление экземляров сущности")
-    def test_delete_many(self, faker, endpoint, vehicle_id, part_type_id):
+    def test_delete_many(self, faker, endpoint, vehicle_id):
         body = {
-            "values": [
-                {"vehicle_id": vehicle_id, "part_type_id": part_type_id},
-                {"vehicle_id": vehicle_id, "part_type_id": part_type_id},
-        ]}
+            "values": [{
+                "file_id": faker.random_number(),
+                "vehicle_id": vehicle_id,
+                "file_name": f"{faker.uuid4()}.pdf"
+            }, {
+                "file_id": faker.random_number(),
+                "vehicle_id": vehicle_id,
+                "file_name": f"{faker.uuid4()}.pdf"
+            }]
+        }
 
-        ids = endpoint.add(json=body).json()['result']
+        # ids = endpoint.add(json=body).json()['result']
+        r = endpoint.add(json=body)
+        LOGGER.info(r.json())
+        ids = r.json()['result']
         LOGGER.info(f"New ids: {ids}")
 
         cond = {"filter_by": {"attribute": "id", "operator": "in", "value": ids}}

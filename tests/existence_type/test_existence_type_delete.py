@@ -1,7 +1,7 @@
 import pytest
 import allure
 from helper import LOGGER
-from endpoint import MobileOperator
+from endpoint import ExistenceType
 from truth.truth import AssertThat
 
 
@@ -34,7 +34,10 @@ class TestDelete:
             ]
         }
 
-        ids = endpoint.add(json=body).json()['result']
+        # ids = endpoint.add(json=body).json()['result']
+        r = endpoint.add(json=body)
+        LOGGER.info(r.json())
+        ids = r.json()['result']
         LOGGER.info(f"New ids: {ids}")
 
         cond = {"filter_by": {"attribute": "id", "operator": "in", "value": ids}}

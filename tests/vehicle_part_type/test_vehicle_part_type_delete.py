@@ -11,7 +11,8 @@ class TestDelete:
         body = {
             "values": {
                 "name": faker.uuid4(),
-                "image": f"images/{faker.uuid4()}.svg"
+                "full_image": f"images/{faker.uuid4()}.svg",
+                "small_image": f"images/{faker.uuid4()}.svg"
             }
         }
 
@@ -31,14 +32,19 @@ class TestDelete:
         body = {
             "values": [{
                 "name": faker.uuid4(),
-                "image": f"images/{faker.uuid4()}.svg"
+                "full_image": f"images/{faker.uuid4()}.svg",
+                "small_image": f"images/{faker.uuid4()}.svg"
             }, {
                 "name": faker.uuid4(),
-                "image": f"images/{faker.uuid4()}.svg"
+                "full_image": f"images/{faker.uuid4()}.svg",
+                "small_image": f"images/{faker.uuid4()}.svg"
             }]
         }
 
-        ids = endpoint.add(json=body).json()['result']
+        # ids = endpoint.add(json=body).json()['result']
+        r = endpoint.add(json=body)
+        LOGGER.info(r.json())
+        ids = r.json()['result']
         LOGGER.info(f"New ids: {ids}")
 
         cond = {"filter_by": {"attribute": "id", "operator": "in", "value": ids}}

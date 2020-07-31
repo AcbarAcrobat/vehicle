@@ -1,19 +1,15 @@
 import pytest
 import allure
 from helper import LOGGER
-from endpoint import CameraAvailability
 from truth.truth import AssertThat
 
 
 class TestDelete:
 
     @allure.title("Удаление одного экземляра сущности")
-    def test_delete_one(self, faker, endpoint):
+    def test_delete_one(self, faker, endpoint, vehicle_id, part_type_id):
         body = {
-            "values": {
-                "name": faker.uuid4(),
-                "description": faker.uuid4()
-            }
+            "values": {"vehicle_id": vehicle_id, "part_type_id": part_type_id}
         }
 
         id_ = endpoint.add(json=body).json()['result']
@@ -26,17 +22,19 @@ class TestDelete:
         resp = endpoint.get_by_id(id_).json()['result']
         AssertThat(resp).IsEmpty()
 
+
     @allure.title("Множественное удаление экземляров сущности")
-    def test_delete_many(self, faker, endpoint):
+    def test_delete_many(self, faker, endpoint, vehicle_id, part_type_id):
         body = {
             "values": [
-                {"name": faker.uuid4(), "description": faker.uuid4()},
-                {"name": faker.uuid4(), "description": faker.uuid4()},
-                {"name": faker.uuid4(), "description": faker.uuid4()}
-            ]
-        }
+                {"vehicle_id": vehicle_id, "part_type_id": part_type_id},
+                {"vehicle_id": vehicle_id, "part_type_id": part_type_id},
+        ]}
 
-        ids = endpoint.add(json=body).json()['result']
+        # ids = endpoint.add(json=body).json()['result']
+        r = endpoint.add(json=body)
+        LOGGER.info(r.json())
+        ids = r.json()['result']
         LOGGER.info(f"New ids: {ids}")
 
         cond = {"filter_by": {"attribute": "id", "operator": "in", "value": ids}}

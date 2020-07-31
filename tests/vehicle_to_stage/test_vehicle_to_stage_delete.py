@@ -36,7 +36,10 @@ class TestDelete:
                 {"vehicle_id": faker.random_number(), "stage_id": faker.random_number()},
                 {"vehicle_id": faker.random_number(), "stage_id": faker.random_number()}]
         }
-        ids = endpoint.add(json=body).json()['result']
+        # ids = endpoint.add(json=body).json()['result']
+        r = endpoint.add(json=body)
+        LOGGER.info(r.json())
+        ids = r.json()['result']
 
         count_before = endpoint.count()
         LOGGER.info(f"New: {ids}")
