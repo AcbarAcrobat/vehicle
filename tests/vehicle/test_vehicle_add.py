@@ -16,10 +16,10 @@ class TestVehicleAdd:
             endpoint.delete_by_ids(self.ids)
 
     @allure.title("Добавление одного экземляра сущности")
-    def test_add_one(self, faker, endpoint, data_vehicle_template):
+    def test_add_one(self, faker, endpoint, data_vehicle_template, data_vehicle_type):
         body = {
             "values": {
-                "type_id": 1, "login": faker.uuid4(), "template_id": data_vehicle_template["ids"][0]
+                "type_id": data_vehicle_type["ids"][0], "login": faker.uuid4(), "template_id": data_vehicle_template["ids"][0]
             }
         }
 
@@ -38,11 +38,19 @@ class TestVehicleAdd:
         AssertThat(resp['login']).IsEqualTo(body['values']['login'])
 
     @allure.title("Множественное добавление экземляров сущности")
-    def test_add_many(self, faker, endpoint, data_vehicle_template):
+    def test_add_many(self, faker, endpoint, data_vehicle_template, data_vehicle_type):
         body = {
             "values": [
-                {"type_id": 1, "login": faker.uuid4(), "template_id": data_vehicle_template["ids"][0]},
-                {"type_id": 2, "login": faker.uuid4(), "template_id": data_vehicle_template["ids"][1]}
+                {
+                    "type_id": data_vehicle_type["ids"][0],
+                    "login": faker.uuid4(),
+                    "template_id": data_vehicle_template["ids"][0]
+                },
+                {
+                    "type_id": data_vehicle_type["ids"][1],
+                    "login": faker.uuid4(),
+                    "template_id": data_vehicle_template["ids"][1]
+                }
             ]
         }
 

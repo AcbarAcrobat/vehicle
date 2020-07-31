@@ -7,10 +7,10 @@ from truth.truth import AssertThat
 class TestVehicleToAttachedFileDelete:
 
     @allure.title("Удаление одного экземляра сущности")
-    def test_delete_one(self, faker, endpoint, vehicle_id):
+    def test_delete_one(self, faker, endpoint, vehicle_id, data_loaded_file_vehicle):
         body = {
             "values": {
-                "file_id": faker.random_number(),
+                "file_id": data_loaded_file_vehicle["ids"][0],
                 "vehicle_id": vehicle_id,
                 "file_name": f"{faker.uuid4()}.pdf"
             }
@@ -28,14 +28,14 @@ class TestVehicleToAttachedFileDelete:
 
 
     @allure.title("Множественное удаление экземляров сущности")
-    def test_delete_many(self, faker, endpoint, vehicle_id):
+    def test_delete_many(self, faker, endpoint, vehicle_id, data_loaded_file_vehicle):
         body = {
             "values": [{
-                "file_id": faker.random_number(),
+                "file_id": data_loaded_file_vehicle["ids"][1],
                 "vehicle_id": vehicle_id,
                 "file_name": f"{faker.uuid4()}.pdf"
             }, {
-                "file_id": faker.random_number(),
+                "file_id": data_loaded_file_vehicle["ids"][2],
                 "vehicle_id": vehicle_id,
                 "file_name": f"{faker.uuid4()}.pdf"
             }]

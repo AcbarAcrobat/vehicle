@@ -7,10 +7,10 @@ from truth.truth import AssertThat
 class TestVehicleToStageAdd:
 
     @allure.title("Добавление одного экземляра сущности")
-    def test_add_one(self, faker, endpoint):
+    def test_add_one(self, faker, endpoint, data_vehicle, tmp_stages):
         body = {
             "values": {
-                "vehicle_id": faker.random_number(), "stage_id": faker.random_number()
+                "vehicle_id": data_vehicle["ids"][0], "stage_id": tmp_stages["ids"][0]
             }
         }
 
@@ -33,11 +33,11 @@ class TestVehicleToStageAdd:
         
 
     @allure.title("Множественное добавление экземляров сущности")
-    def test_add_many(self, faker, endpoint):
+    def test_add_many(self, faker, endpoint, data_vehicle, tmp_stages):
         body = {
             "values": [
-                {"vehicle_id": faker.random_number(), "stage_id": faker.random_number()},
-                {"vehicle_id": faker.random_number(), "stage_id": faker.random_number()}]
+                {"vehicle_id": data_vehicle["ids"][0], "stage_id": tmp_stages["ids"][1]},
+                {"vehicle_id": data_vehicle["ids"][0], "stage_id": tmp_stages["ids"][2]}]
         }
         count_before = endpoint.count()
 

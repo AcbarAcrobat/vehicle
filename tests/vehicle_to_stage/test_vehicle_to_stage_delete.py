@@ -7,9 +7,9 @@ from truth.truth import AssertThat
 class TestVehicleToStageDelete:
 
     @allure.title("Удаление одного экземляра сущности")
-    def test_delete_one(self, faker, endpoint):
+    def test_delete_one(self, faker, endpoint, tmp_stages, data_vehicle):
         body = {
-            "values": {"vehicle_id": faker.random_number(), "stage_id": faker.random_number()}
+            "values": {"vehicle_id": data_vehicle["ids"][0], "stage_id": tmp_stages["ids"][0]}
         }
 
         id_ = endpoint.add(json=body).json()['result']
@@ -30,11 +30,12 @@ class TestVehicleToStageDelete:
 
 
     @allure.title("Множественное удаление экземляров сущности")
-    def test_delete_many(self, faker, endpoint):
+    def test_delete_many(self, faker, endpoint, tmp_stages, data_vehicle):
         body = {
             "values": [
-                {"vehicle_id": faker.random_number(), "stage_id": faker.random_number()},
-                {"vehicle_id": faker.random_number(), "stage_id": faker.random_number()}]
+                {"vehicle_id": data_vehicle["ids"][0], "stage_id": tmp_stages["ids"][1]},
+                {"vehicle_id": data_vehicle["ids"][0], "stage_id": tmp_stages["ids"][2]}
+            ]
         }
         # ids = endpoint.add(json=body).json()['result']
         r = endpoint.add(json=body)

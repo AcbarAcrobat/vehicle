@@ -162,7 +162,7 @@ class TestVehicleGet:
             AssertThat(data['error']).Contains(child_id)
 
     @allure.title("Получение списка экземляров сущности по условию, содержащему препроцессор")
-    def test_filter_by_even_id(self, endpoint, new_entity):
+    def test_filter_by_even_id(self, endpoint):
         body = {
             "filter_by": [{"attribute": {"operator": "%", "attribute": "id", "value": 2}, "operator": "=", "value": 0}],
             "columns": ["id"]
@@ -195,7 +195,7 @@ class TestVehicleGet:
                 raise AssertionError(f'Not true that {id__} >= {id_} OR {login_} == {login}')
 
     @allure.title(" Получение списка отсортированных по возрастанию экземляров сущности")
-    def test_order_by(self, new_entity, endpoint):
+    def test_order_by(self, endpoint):
         body = {
             "columns": ["id"],
             "order_by": ["id"]
@@ -209,7 +209,7 @@ class TestVehicleGet:
         AssertThat(data).ContainsExactlyElementsIn(sorted_data).InOrder()
 
     @allure.title("Получение списка отсортированных по убыванию экземляров сущности")
-    def test_order_by_descending(self, new_entity, endpoint):
+    def test_order_by_descending(self, endpoint):
         body = {
             "columns": ["id"],
             "order_by": [{"column": "id", "ascending": False}]

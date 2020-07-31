@@ -54,35 +54,38 @@ class TestVehicleCameraErrorGet:
         validate(r.json(), vehicle_camera_error.foreign_key_schema())
 
     @allure.title("Получение списка экземляров сущности по условию")
-    def test_filter_by_attribute(self, endpoint, new_entity):
+    def test_filter_by_attribute(self, endpoint, data_vehicle_camera_error):
+        code = data_vehicle_camera_error["body"]["values"][0]["code"]
         body = {
-            "filter_by": [{"attribute": "code", "operator": "=", "value": 3}]
+            "filter_by": [{"attribute": "code", "operator": "=", "value": code}]
         }
         r = endpoint.get(json=body)
 
         resp = r.json()['result']
         codes = [r['code'] for r in resp]
 
-        [AssertThat(i).IsEqualTo(3) for i in codes]
+        [AssertThat(i).IsEqualTo(code) for i in codes]
 
     @allure.title("Получение списка экземляров сущности по условию 'И'")
-    def test_filter_by_multiple_attributes(self, endpoint, new_entity, body):
-        body_ = {
+    def test_filter_by_multiple_attributes(self, endpoint, data_vehicle_camera_error):
+        code = data_vehicle_camera_error["body"]["values"][0]["code"]
+        occurred_at = data_vehicle_camera_error["body"]["values"][0]['occurred_at']
+        body = {
             "filter_by": [
-                {"attribute": "code", "operator": "=", "value": 3},
-                {"attribute": "occurred_at", "operator": ">=", "value": body['values'][0]['occurred_at']}
+                {"attribute": "code", "operator": "=", "value": code},
+                {"attribute": "occurred_at", "operator": ">=", "value": occurred_at}
             ]
         }
-        r = endpoint.get(json=body_)
+        r = endpoint.get(json=body)
 
         resp = r.json()['result']
 
         for data in resp:
-            AssertThat(data['code']).IsEqualTo(3)
-            AssertThat(data['occurred_at']).IsAtLeast(body['values'][0]['occurred_at'])
+            AssertThat(data['code']).IsEqualTo(code)
+            AssertThat(data['occurred_at']).IsAtLeast(occurred_at)
 
     @allure.title("Получение списка экземляров сущности по условию, содержащему препроцессор")
-    def test_filter_by_even_code(self, endpoint, new_entity):
+    def test_filter_by_even_code(self, endpoint):
         body = {
             'filter_by': [{'attribute': {"operator": "%", "attribute": "code", "value": 2}, 'operator': '=', 'value': 0}],
             'columns': ['code']
@@ -95,25 +98,27 @@ class TestVehicleCameraErrorGet:
         [AssertThat(i % 2).IsEqualTo(0) for i in codes]
 
     @allure.title("Получение списка экземляров сущности по условию 'ИЛИ'")
-    def test_search_by(self, endpoint, new_entity, body):
-        body_ = {
+    def test_search_by(self, endpoint, data_vehicle_camera_error):
+        code = data_vehicle_camera_error["body"]["values"][0]["code"]
+        occurred_at = data_vehicle_camera_error["body"]["values"][0]['occurred_at']
+        body = {
             "search_by": [
-                {"attribute": "code", "operator": "=", "value": 3},
-                {"attribute": "occurred_at", "operator": ">=", "value": body['values'][0]['occurred_at']}
+                {"attribute": "code", "operator": "=", "value": code},
+                {"attribute": "occurred_at", "operator": ">=", "value": occurred_at}
             ]
         }
-        r = endpoint.get(json=body_)
+        r = endpoint.get(json=body)
 
         resp = r.json()['result']
 
         for data in resp:
-            code = data['code']
-            occurred_at = data['occurred_at']
-            if code != 3 and occurred_at < body['values'][0]['occurred_at']:
-                raise AssertionError(f'{code}, {occurred_at}')
+            code_ = data['code']
+            occurred_at_ = data['occurred_at']
+            if code_ != code and occurred_at_ < occurred_at:
+                raise AssertionError(f'{code_} != {code}, {occurred_at_} < {occurred_at}')
 
     @allure.title(" Получение списка отсортированных по возрастанию экземляров сущности")
-    def test_order_by(self, endpoint, new_entity):
+    def test_order_by(self, endpoint):
         body = {
             "columns": ["code"],
             "order_by": ["code"]
@@ -127,7 +132,7 @@ class TestVehicleCameraErrorGet:
         AssertThat(data).ContainsExactlyElementsIn(sorted_data).InOrder()
 
     @allure.title("Получение списка отсортированных по убыванию экземляров сущности")
-    def test_order_by_descending(self, endpoint, new_entity):
+    def test_order_by_descending(self, endpoint):
         body = {
             "columns": ["code"],
             "order_by": [{"column": "code", "ascending": False}]
@@ -141,7 +146,7 @@ class TestVehicleCameraErrorGet:
         AssertThat(data).ContainsExactlyElementsIn(sorted_data).InOrder()
 
     @allure.title("Получение списка экземляров сущности со смещением")
-    def test_offset(self, endpoint, new_entity):
+    def test_offset(self, endpoint):
         body = {
             "columns": ["vehicle_camera_id"],
             "limit": 3
