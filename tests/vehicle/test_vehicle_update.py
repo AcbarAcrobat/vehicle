@@ -23,7 +23,7 @@ class TestVehicleUpdate:
     def test_bulk_update_by_filter(self, endpoint, faker, data_vehicle):
         new_data = faker.uuid4()
 
-        cond = [{"attribute": "id", "operator": "in", "value": data_vehicle[:3]}]
+        cond = [{"attribute": "id", "operator": "in", "value": data_vehicle["ids"][:3]}]
         body = {
             "values": [{"login": new_data}],
             "filter_by": cond
