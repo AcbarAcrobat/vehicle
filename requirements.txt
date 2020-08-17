@@ -9,3 +9,4 @@ pytruth~=1.1.0
 pytest~=5.4.1
 Faker~=4.0.2
 pytest-xdist~=1.31.0
+numpy~=1.19.1
