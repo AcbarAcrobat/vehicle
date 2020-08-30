@@ -6,9 +6,8 @@ from helper.logger import LOGGER
 
 
 class BaseEndpoint(object):
-
     URL = ''
-    APPROVE_PATH =  ''
+    APPROVE_PATH = ''
 
     def __init__(self, session):
         self.session = session
@@ -30,11 +29,12 @@ class BaseEndpoint(object):
                 # self.token = {'token': "foo-bar-baz"}
 
             body = {
-                ** self.token,
-                ** kwargs.get('json', {})
+                **self.token,
+                **kwargs.get('json', {})
             }
             kwargs['json'] = body
             return func(self, *args, **kwargs)
+
         return wrap
 
     @auth_before
@@ -64,13 +64,13 @@ class BaseEndpoint(object):
     @auth_before
     def get_random(self, **kwargs):
         c = self.count()
-        offset = random.randint(0, c-1)
+        offset = random.randint(0, c - 1)
         return self.get(json={"limit": 1, "offset": offset}).json()['result'][0]
 
     @auth_before
     def get_last(self, **kwargs):
         c = self.count()
-        return self.get(json={"limit": 1, "offset": c-1}).json()['result'][0]
+        return self.get(json={"limit": 1, "offset": c - 1}).json()['result'][0]
 
     @auth_before
     def get(self, **kwargs):
@@ -84,7 +84,7 @@ class BaseEndpoint(object):
     @auth_before
     def get_by(self, attr, val, **kwargs):
         body = {
-            ** kwargs['json'],
+            **kwargs['json'],
             "filter_by": {"attribute": attr, "operator": "=", "value": val}
         }
         kwargs['json'] = body
@@ -106,32 +106,31 @@ class BaseEndpoint(object):
         return s.post(self.URL + 'delete', **kwargs)
 
     @auth_before
-    def delete_many_by(self, attr:str, value_list:list, **kwargs):
+    def delete_many_by(self, attr: str, value_list: list, **kwargs):
         s = self.session
         body = {
-            ** kwargs['json'],
-            ** {
+            **kwargs['json'],
+            **{
                 "filter_by": {
-                    "attribute": attr, "operator": "in", "value":value_list
-            }
-        }}
+                    "attribute": attr, "operator": "in", "value": value_list
+                }
+            }}
         kwargs['json'] = body
         LOGGER.info(f"Deleting {self.__class__.__name__}: by {attr} in {value_list}...")
         return s.post(self.URL + 'delete', **kwargs)
 
-    
     @auth_before
-    def delete_by(self, attrs:list, **kwargs):
+    def delete_by(self, attrs: list, **kwargs):
         s = self.session
-        filter_by = [ 
+        filter_by = [
             {"attribute": attr, "operator": "=", "value": value}
             for attr, value in attrs
         ]
         body = {
-            ** kwargs['json'],
-            ** {
+            **kwargs['json'],
+            **{
                 "filter_by": filter_by
-        }}
+            }}
         kwargs['json'] = body
         LOGGER.info(f"Deleting {self.__class__.__name__}: {attrs} ...")
         return s.post(self.URL + 'delete', **kwargs)

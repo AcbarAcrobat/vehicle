@@ -33,4 +33,3 @@ class Image(BaseEndpoint):
         s = self.session
         url = self.URL + "get"
         return s.post(url, json={"id": id_})
-        

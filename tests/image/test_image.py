@@ -31,7 +31,7 @@ class TestImage:
         """
         i = Image(session)
         file_name = faker.uuid4()
-        image = bytes(numpy.random.rand(30,30,3) * 255)
+        image = bytes(numpy.random.rand(30, 30, 3) * 255)
 
         r = i.upload(image, file_name, "image/png").json()
         LOGGER.info(r)
