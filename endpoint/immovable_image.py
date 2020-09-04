@@ -5,11 +5,11 @@ from pathlib import Path
 # import numpy
 
 
-class Image(BaseEndpoint):
+class ImmovableImage(BaseEndpoint):
 
     def __init__(self, session):
         super().__init__(session)
-        self.URL = config["vehicle_url"] + 'image/'
+        self.URL = config["immovable_url"] + 'image/'
 
     @BaseEndpoint.auth_before
     def upload(self, byte_array, dist, mime, **kwargs):

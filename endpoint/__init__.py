@@ -6,8 +6,6 @@ from .entity.contract import Contract
 from .entity.contract_stage import ContractStage
 from .entity.event_type import EventType
 from .entity.existence_type import ExistenceType
-from .entity.loaded_file_vehicle import LoadedFileVehicle
-from .entity.loaded_file_immovable import LoadedFileImmovable
 from .entity.mobile_operator import MobileOperator
 from .entity.region import Region
 from .entity.user_logs import UserLogs
@@ -28,3 +26,7 @@ from .entity.vehicle_template import VehicleTemplate
 from .entity.vehicle_to_attached_file import VehicleToAttachedFile
 from .entity.vehicle_to_stage import VehicleToStage
 from .entity.vehicle_type import VehicleType
+from .vehicle_file import VehicleFile
+from .vehicle_image import VehicleImage
+from .immovable_file import ImmovableFile
+from .immovable_image import ImmovableImage

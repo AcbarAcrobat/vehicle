@@ -5,7 +5,7 @@ from pathlib import Path
 # import numpy
 
 
-class File(BaseEndpoint):
+class VehicleFile(BaseEndpoint):
 
     def __init__(self, session):
         super().__init__(session)

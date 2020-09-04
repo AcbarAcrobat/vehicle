@@ -10,3 +10,4 @@ pytest
 Faker
 pytest-xdist
 numpy
+Pillow

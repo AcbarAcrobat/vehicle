@@ -2,7 +2,7 @@ import pytest
 import allure
 from helper import LOGGER
 from truth.truth import AssertThat
-from endpoint.file import File
+from endpoint.vehicle_file import VehicleFile
 import numpy
 
 
@@ -16,7 +16,7 @@ class TestFile:
                             "tasks.py", 
                             "viewtopic.html"])
     def test_file_upload_and_get(self, faker, session, file_name):
-        i = File(session)
+        i = VehicleFile(session)
         name = faker.uuid4()
         r = i.upload(file_name, name, "").json()
         AssertThat(r["result"]).IsInstanceOf(int)
