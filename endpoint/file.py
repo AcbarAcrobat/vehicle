@@ -12,13 +12,15 @@ class File(BaseEndpoint):
         self.URL = config["vehicle_url"] + 'file/'
 
     @BaseEndpoint.auth_before
-    def upload(self, byte_array, dist, mime, **kwargs):
+    def upload(self, file_name, dist, mime, **kwargs):
         url = self.URL + f"upload?name={dist}"
         s = self.session
-
+        path = Path.cwd().joinpath("_data", file_name)
+        with open(path, 'rb') as file:
+            data = file.read()
         return s.post(
             url,
-            data=byte_array,
+            data=data,
             headers={'Content-Type': mime}
         )
 
@@ -33,3 +35,10 @@ class File(BaseEndpoint):
         s = self.session
         url = self.URL + "get"
         return s.post(url, json={"id": id_})
+
+    def check_size_before_after(self, file_name, size_after):
+        from truth.truth import AssertThat
+        path = Path.cwd().joinpath("_data", file_name)
+        with open(path, 'rb') as file:
+            data = file.read()
+        AssertThat(data).IsEqualTo(size_after)
