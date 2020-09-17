@@ -7,6 +7,9 @@ from helper import LOGGER
 from xdist.scheduler.loadscope import LoadScopeScheduling
 from endpoint import *
 from datetime import datetime as dt
+import numpy
+from pathlib import Path
+from PIL import Image
 
 
 def now_millis():
@@ -225,44 +228,70 @@ def data_vehicle_error(session, faker, data_vehicle):
 ####################################################################################
 @pytest.fixture(scope='session')
 def data_loaded_file_vehicle(session, faker):
-    body = {"values": []}
+    # body = {"values": []}
+    ids = []
     for i in range(5):
-        body["values"].append({
-            "file_extension": ".json",
-            "storage_path": faker.bothify("##??"),
-            "storage_file_name": faker.uuid4(),
-            "file_size": faker.random_number(),
-            "uploaded_at": now_millis(),
-            "full_file_name": faker.uuid4(),
-            "sha512": faker.sha256()+faker.sha256(),
-            "md5": faker.md5()
-        })
-    r = LoadedFileVehicle(session).add(json=body)
-    LOGGER.info(f"LoadedFileVehicle: {r.json()}")
-    ids = r.json()['result']
-    yield {"body": body, "ids": ids}
-    LoadedFileVehicle(session).delete_many_by("id", ids)
+        i = VehicleFile(session)
+        file_name = faker.uuid4()+".png"
+        path_to = Path.cwd().joinpath("_data", file_name)
+        with open(path_to, "wb+") as file:
+            imarray = numpy.random.rand(30,30,3) * 255
+            file.write(imarray)
+            # im = Image.fromarray(imarray.astype('uint8')).convert('RGBA')
+            # im.save(file)
+        r = i.upload(file_name, file_name, "image/png").json()
+        LOGGER.info(r)
+        Path.unlink(path_to)
+        ids.append(r['result'])
+        # body["values"].append({
+        #     "file_extension": ".json",
+        #     "storage_path": faker.bothify("##??"),
+        #     "storage_file_name": faker.uuid4(),
+        #     "file_size": faker.random_number(),
+        #     "uploaded_at": now_millis(),
+        #     "full_file_name": faker.uuid4(),
+        #     "sha512": faker.sha256()+faker.sha256(),
+        #     "md5": faker.md5()
+        # })
+    # r = LoadedFileVehicle(session).add(json=body)
+    LOGGER.info(f"VehicleFile: {ids}")
+    # ids = r.json()['result']
+    yield {"body": [], "ids": ids}
+    # LoadedFileVehicle(session).delete_many_by("id", ids)
     
 
 @pytest.fixture(scope='session')
 def data_loaded_file_immovable(session, faker):
-    body = {"values": []}
+    # body = {"values": []}
+    ids = []
     for i in range(5):
-        body["values"].append({
-            "file_extension": ".json",
-            "storage_path": faker.bothify("##??"),
-            "storage_file_name": faker.uuid4(),
-            "file_size": faker.random_number(),
-            "uploaded_at": now_millis(),
-            "full_file_name": faker.uuid4(),
-            "sha512": faker.sha256()+faker.sha256(),
-            "md5": faker.md5()
-        })
-    r = LoadedFileImmovable(session).add(json=body)
-    LOGGER.info(f"LoadedFileImmovable: {r.json()}")
-    ids = r.json()['result']
-    yield {"body": body, "ids": ids}
-    LoadedFileImmovable(session).delete_many_by("id", ids)
+        i = ImmovableFile(session)
+        file_name = faker.uuid4()+".png"
+        path_to = Path.cwd().joinpath("_data", file_name)
+        with open(path_to, "wb+") as file:
+            imarray = numpy.random.rand(30,30,3) * 255
+            file.write(imarray)
+            # im = Image.fromarray(imarray.astype('uint8')).convert('RGBA')
+            # im.save(file)
+        r = i.upload(file_name, file_name, "image/png").json()
+        LOGGER.info(r)
+        Path.unlink(path_to)
+        ids.append(r["result"])
+        # body["values"].append({
+            # "file_extension": ".json",
+            # "storage_path": faker.bothify("##??"),
+            # "storage_file_name": faker.uuid4(),
+            # "file_size": faker.random_number(),
+            # "uploaded_at": now_millis(),
+            # "full_file_name": faker.uuid4(),
+            # "sha512": faker.sha256()+faker.sha256(),
+            # "md5": faker.md5()
+        # })
+    # r = LoadedFileImmovable(session).add(json=body)
+    LOGGER.info(f"ImmovableFile: {ids}")
+    # ids = r.json()['result']
+    yield {"body": [], "ids": ids}
+    # LoadedFileImmovable(session).delete_many_by("id", ids)
 
 
 @pytest.fixture(scope='session')
