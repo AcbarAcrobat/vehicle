@@ -10,4 +10,4 @@ pytest
 Faker
 pytest-xdist
 numpy
-Pillow
+Pillow==2.2.1

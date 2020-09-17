@@ -234,10 +234,11 @@ def data_loaded_file_vehicle(session, faker):
         i = VehicleFile(session)
         file_name = faker.uuid4()+".png"
         path_to = Path.cwd().joinpath("_data", file_name)
-        with open(path_to, "w+"):
+        with open(path_to, "wb+") as file:
             imarray = numpy.random.rand(30,30,3) * 255
-            im = Image.fromarray(imarray.astype('uint8')).convert('RGBA')
-            im.save(path_to)
+            file.write(imarray)
+            # im = Image.fromarray(imarray.astype('uint8')).convert('RGBA')
+            # im.save(file)
         r = i.upload(file_name, file_name, "image/png").json()
         LOGGER.info(r)
         Path.unlink(path_to)
@@ -267,10 +268,11 @@ def data_loaded_file_immovable(session, faker):
         i = ImmovableFile(session)
         file_name = faker.uuid4()+".png"
         path_to = Path.cwd().joinpath("_data", file_name)
-        with open(path_to, "w+"):
+        with open(path_to, "wb+") as file:
             imarray = numpy.random.rand(30,30,3) * 255
-            im = Image.fromarray(imarray.astype('uint8')).convert('RGBA')
-            im.save(path_to)
+            file.write(imarray)
+            # im = Image.fromarray(imarray.astype('uint8')).convert('RGBA')
+            # im.save(file)
         r = i.upload(file_name, file_name, "image/png").json()
         LOGGER.info(r)
         Path.unlink(path_to)

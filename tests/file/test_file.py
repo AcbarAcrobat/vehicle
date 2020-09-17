@@ -10,10 +10,9 @@ class TestFile:
 
 
     @pytest.mark.parametrize("file_name", [
-                            "steam_latest.deb", 
+                            "steam.deb", 
                             "Honda_CB750.pdf",
-                            "MAN_FFMPEG.odt",
-                            "tasks.py", 
+                            "FFMPEG.odt",
                             "viewtopic.html"])
     def test_file_upload_and_get(self, faker, session, file_name):
         i = VehicleFile(session)
