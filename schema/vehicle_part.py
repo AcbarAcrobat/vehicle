@@ -13,7 +13,7 @@ vehicle_part_struct_properties = {
     ** vehicle_part_fk_properties,
     "cameras":  {
         'type': 'array',
-        'items': build(vehicle_camera.vehicle_camera_fk_properties)
+        'items': build(vehicle_camera.vehicle_camera_struct_properties)
     }
 }
 

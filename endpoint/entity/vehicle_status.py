@@ -1,6 +1,9 @@
 from endpoint import BaseEndpoint
+from pytest_testconfig import config
 
 
 class VehicleStatus(BaseEndpoint):
 
-    PATH = 'entity/vehicle_status/'
+    def __init__(self, session):
+        super().__init__(session)
+        self.URL = config["vehicle_url"] + 'entity/vehicle_status/'

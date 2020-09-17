@@ -1,6 +1,7 @@
 import pytest
 from endpoint import CameraAvailability
 from helper.logger import LOGGER
+from pytest_testconfig import config
 
 
 @pytest.fixture(scope='class')
@@ -19,7 +20,10 @@ def body(faker):
 
 @pytest.fixture(scope='function')
 def new_entity(endpoint, body):
-    ids = endpoint.add(json=body).json()['result']
+    r = endpoint.add(json=body)
+    LOGGER.info(r.json())
+    ids = r.json()['result']
+    # ids = endpoint.add(json=body).json()['result']
     LOGGER.info(f"New ids: {ids}")
     yield ids
     endpoint.delete_by_ids(ids)

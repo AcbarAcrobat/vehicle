@@ -1,6 +1,9 @@
 from endpoint import BaseEndpoint
+from pytest_testconfig import config
 
 
 class VehicleContractBinding(BaseEndpoint):
 
-    PATH = 'entity/vehicle_contract_binding/'
+    def __init__(self, session):
+        super().__init__(session)
+        self.URL = config["vehicle_url"] + 'entity/vehicle_contract_binding/'

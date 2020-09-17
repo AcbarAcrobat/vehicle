@@ -11,6 +11,7 @@ vehicle_fk_properties = {
     "registration_plate": {"type": "string"},
     "contract_bindings": array_of("integer"),
     "ownership_type_id": {"type": "integer"},
+    "financing_type_id": any_of_types("null", "integer"),
     "sync_with_netris": {"type": "boolean"},
     "attached_files": array_of("integer"),
     "approving_date": {"type": "integer"},
@@ -48,7 +49,8 @@ vehicle_fk_properties = {
 error_fk_properties = {
     "vehicle_id": {"type": "integer"},
     "occurred_at": {"type": "integer"},
-    "code": {"type": "integer"}
+    "code": {"type": "integer"},
+    "outdated_at": any_of_types("null", "integer")
 }
 
 status_fk_properties = {

@@ -1,5 +1,5 @@
 import pytest
-from endpoint import VehicleToStage
+from endpoint import VehicleToStage, ContractStage
 from helper.logger import LOGGER
 
 
@@ -8,22 +8,20 @@ def endpoint(session):
     yield VehicleToStage(session)
 
 
-# @pytest.fixture(scope='function')
-# def body(faker):
-#     yield {
-#         "values": [{
-#             "stage_id": faker.random_digit_not_null(),
-#             "vehicle_id": faker.random_digit_not_null()
-#         }, {
-#             "stage_id": faker.random_digit_not_null(),
-#             "vehicle_id": faker.random_digit_not_null()
-#         }]
-#     }
-
-
-# @pytest.fixture(scope='function')
-# def new_entity(endpoint, body):
-#     ids = endpoint.add(json=body).json()['result']
-#     LOGGER.info(f"New ids: {ids}")
-#     yield ids
-#     endpoint.delete_by_ids(ids)
+@pytest.fixture(scope='class')
+def tmp_stages(session, faker, data_contract):
+    body = {"values": []}
+    for i in range(5):
+        body["values"].append({
+            "created_at_epoch": 1000,
+            "start_at_epoch": 2000,
+            "end_at_epoch": 3000,
+            "contract_id": data_contract["ids"][i],
+            "title": faker.uuid4(),
+            "price": abs(faker.pyfloat())
+        })
+    r = ContractStage(session).add(json=body)
+    LOGGER.info(f"ContractStage: {r.json()}")
+    ids = r.json()['result']
+    yield {"body": body, "ids": ids}
+    ContractStage(session).delete_many_by("id", ids)

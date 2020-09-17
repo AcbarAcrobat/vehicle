@@ -13,8 +13,8 @@ vehicle_camera_fk_properties = {
     "rtsp_second_url": {"type": "string"},
     "stream_bitrate": {"type": "integer"},
     "rtsp_first_url": {"type": "string"},
-    "daytime_image": {"type": "integer"},
-    "night_image": {"type": "integer"},
+    "daytime_image": any_of_types("null", "integer"),
+    "night_image": any_of_types("null", "integer"),
     "rtsp_camera": {"type": "string"},
     "description": {"type": "string"},
     "ip_address": ip_addr,
@@ -50,6 +50,7 @@ vehicle_camera_fk_properties = {
 error_fk_properties = {
     "vehicle_camera_id": {"type": "integer"},
     "occurred_at": {"type": "integer"},
+    "outdated_at": any_of_types("null", "integer"),
     "code": {"type": "integer"}
 }
 

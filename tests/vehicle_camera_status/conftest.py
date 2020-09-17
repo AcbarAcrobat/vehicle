@@ -10,8 +10,9 @@ def endpoint(session):
 
 
 @pytest.fixture(scope='function')
-def camera_id(session):
-    yield VehicleCamera(session).get_random()['id']
+def camera_id(session, data_vehicle_camera):
+    # yield VehicleCamera(session).get_random()['id']
+    yield data_vehicle_camera["ids"][0]
 
 
 @pytest.fixture(scope='function')
@@ -51,7 +52,10 @@ def body(faker):
 
 @pytest.fixture(scope='function')
 def new_entity(endpoint, body):
-    ids = endpoint.add(json=body).json()['result']
+    # ids = endpoint.add(json=body).json()['result']
+    r = endpoint.add(json=body)
+    LOGGER.info(r.json())
+    ids = r.json()['result']
     LOGGER.info(f"New ids: {ids}")
     yield ids
     endpoint.delete_by_ids(ids)
