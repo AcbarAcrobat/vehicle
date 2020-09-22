@@ -9,7 +9,6 @@ class TestVehiclePartUpdate:
 
     @allure.title("Обновление экземляра сущности по первичному ключу")
     def test_update_by_id(self, session, endpoint, faker, new_entity, body, data_vehicle):
-        # vehicle_id = Vehicle(session).get_random()['id']
         vehicle_id = data_vehicle["ids"][0]
         resp = endpoint.update(json={
             "values": {"id": new_entity[0], "vehicle_id": vehicle_id}
@@ -23,7 +22,6 @@ class TestVehiclePartUpdate:
 
     @allure.title("Обновление экземляров сущности по фильтру")
     def test_bulk_update_by_filter(self, session, endpoint, faker, new_entity, body, data_vehicle):
-        # vehicle_id = Vehicle(session).get_random()['id']
         vehicle_id = data_vehicle["ids"][0]
 
         cond = [{"attribute": "id", "operator": "in", "value": new_entity}]
