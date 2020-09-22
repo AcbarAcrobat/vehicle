@@ -21,6 +21,7 @@ vehicle_fk_properties = {
     "contract_id": {"type": "integer"},
     "created_at": {"type": "intefer"},
     "ip_address": ip_addr,
+    "created_at": {"type": "integer"},
     "region_id": {"type": "integer"},
     "is_hidden": {"type": "boolean"},
     "longitude": {"type": "number"},
