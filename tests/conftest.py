@@ -197,7 +197,8 @@ def data_vehicle(session, faker, data_mobile_operator, data_vehicle_type, data_e
             #     ]
             # },
             "login": faker.uuid4(),
-            "title": faker.uuid4()
+            "title": faker.uuid4(),
+            "created_at": now_millis()
         })
     r = Vehicle(session).add(json=body)
     LOGGER.info(f"Vehicle: {r.json()}")
