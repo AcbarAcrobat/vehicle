@@ -41,7 +41,6 @@ class TestVehiclePartTypeDelete:
             }]
         }
 
-        # ids = endpoint.add(json=body).json()['result']
         r = endpoint.add(json=body)
         LOGGER.info(r.json())
         ids = r.json()['result']

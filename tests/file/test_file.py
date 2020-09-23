@@ -27,4 +27,3 @@ class TestFile:
         LOGGER.info(r.headers)
         i.check_size_before_after(file_name, r.content)
         AssertThat(r.headers["Content-Disposition"]).Contains(name)
-        

@@ -19,7 +19,9 @@ class TestVehicleAdd:
     def test_add_one(self, faker, endpoint, data_vehicle_template, data_vehicle_type):
         body = {
             "values": {
-                "type_id": data_vehicle_type["ids"][0], "login": faker.uuid4(), "template_id": data_vehicle_template["ids"][0]
+                "type_id": data_vehicle_type["ids"][0],
+                "login": faker.uuid4(),
+                "template_id": data_vehicle_template["ids"][0]
             }
         }
 
