@@ -31,7 +31,6 @@ class TestVehiclePartDelete:
                 {"vehicle_id": vehicle_id, "part_type_id": part_type_id},
         ]}
 
-        # ids = endpoint.add(json=body).json()['result']
         r = endpoint.add(json=body)
         LOGGER.info(r.json())
         ids = r.json()['result']

@@ -1,5 +1,5 @@
 import pytest
-from endpoint import VehicleCamera, VehiclePart
+from endpoint import VehicleCamera
 from helper.logger import LOGGER
 
 
@@ -10,7 +10,6 @@ def endpoint(session):
 
 @pytest.fixture(scope='function')
 def part_id(session, data_vehicle_part):
-    # yield VehiclePart(session).get_random()['id']
     yield data_vehicle_part["ids"][0]
 
 

@@ -164,16 +164,12 @@ def data_vehicle(session, faker, data_mobile_operator, data_vehicle_type, data_e
             "is_stats_check_enabled": True,
             "mobile_operator_id": data_mobile_operator["ids"][i],
             "registration_plate": faker.uuid4(),
-            # "contract_bindings": array_of("integer"),
-            # "ownership_type_id": {"type": "integer"},
             "sync_with_netris": True,
-            # "attached_files": array_of("integer"),
             "approving_date": round(dt.utcnow().timestamp()*1000),
             "financing_type_id": 1,
             "chat_room_id": faker.random_number(),
             "availability": data_existence_type["ids"][i],
             "template_id": data_vehicle_template["ids"][i],
-            # "contract_id": {"type": "integer"},
             "ip_address": "127.0.0.1",
             "region_id": 1,
             "is_hidden": False,
@@ -182,22 +178,9 @@ def data_vehicle(session, faker, data_mobile_operator, data_vehicle_type, data_e
             "axxon_id": faker.uuid4(),
             "latitude": 56.78,
             "type_id": data_vehicle_type["ids"][i],
-            # "status": {
-            #     "anyOf": [
-            #         array_of("integer"),
-            #         {"type": "null"}
-            #     ]
-            # },
-            # "stages": array_of("integer"),
-            # "parts": array_of("integer"),
-            # "error": {
-            #     "anyOf": [
-            #         array_of("integer"),
-            #         {"type": "null"}
-            #     ]
-            # },
             "login": faker.uuid4(),
-            "title": faker.uuid4()
+            "title": faker.uuid4(),
+            "created_at": now_millis()
         })
     r = Vehicle(session).add(json=body)
     LOGGER.info(f"Vehicle: {r.json()}")
@@ -237,32 +220,16 @@ def data_loaded_file_vehicle(session, faker):
         with open(path_to, "wb+") as file:
             imarray = numpy.random.rand(30,30,3) * 255
             file.write(imarray)
-            # im = Image.fromarray(imarray.astype('uint8')).convert('RGBA')
-            # im.save(file)
         r = i.upload(file_name, file_name, "image/png").json()
         LOGGER.info(r)
         Path.unlink(path_to)
         ids.append(r['result'])
-        # body["values"].append({
-        #     "file_extension": ".json",
-        #     "storage_path": faker.bothify("##??"),
-        #     "storage_file_name": faker.uuid4(),
-        #     "file_size": faker.random_number(),
-        #     "uploaded_at": now_millis(),
-        #     "full_file_name": faker.uuid4(),
-        #     "sha512": faker.sha256()+faker.sha256(),
-        #     "md5": faker.md5()
-        # })
-    # r = LoadedFileVehicle(session).add(json=body)
     LOGGER.info(f"VehicleFile: {ids}")
-    # ids = r.json()['result']
     yield {"body": [], "ids": ids}
-    # LoadedFileVehicle(session).delete_many_by("id", ids)
-    
+
 
 @pytest.fixture(scope='session')
 def data_loaded_file_immovable(session, faker):
-    # body = {"values": []}
     ids = []
     for i in range(5):
         i = ImmovableFile(session)
@@ -271,27 +238,12 @@ def data_loaded_file_immovable(session, faker):
         with open(path_to, "wb+") as file:
             imarray = numpy.random.rand(30,30,3) * 255
             file.write(imarray)
-            # im = Image.fromarray(imarray.astype('uint8')).convert('RGBA')
-            # im.save(file)
         r = i.upload(file_name, file_name, "image/png").json()
         LOGGER.info(r)
         Path.unlink(path_to)
         ids.append(r["result"])
-        # body["values"].append({
-            # "file_extension": ".json",
-            # "storage_path": faker.bothify("##??"),
-            # "storage_file_name": faker.uuid4(),
-            # "file_size": faker.random_number(),
-            # "uploaded_at": now_millis(),
-            # "full_file_name": faker.uuid4(),
-            # "sha512": faker.sha256()+faker.sha256(),
-            # "md5": faker.md5()
-        # })
-    # r = LoadedFileImmovable(session).add(json=body)
     LOGGER.info(f"ImmovableFile: {ids}")
-    # ids = r.json()['result']
     yield {"body": [], "ids": ids}
-    # LoadedFileImmovable(session).delete_many_by("id", ids)
 
 
 @pytest.fixture(scope='session')
@@ -387,9 +339,7 @@ def data_vehicle_to_stage(session, faker, data_vehicle, data_contract_stage):
             ("vehicle_id", data["vehicle_id"]),
             ("stage_id", data["stage_id"])
         ])
-####################################################################################
-####################################################################################
-####################################################################################
+
 
 @pytest.fixture(scope='session')
 def data_vehicle_to_attached_file(session, faker, data_vehicle, data_loaded_file_vehicle):
